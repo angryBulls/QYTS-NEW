@@ -1,0 +1,17 @@
+#BNF+IAT 1.0 UTF-8;
+!grammar testBasketball;
+
+!slot <teamName>;
+!slot <tenNumber>;
+!slot <bitsNumber>;
+!slot <behavior>;
+!slot <result>;
+!start <statistics>;
+
+<statistics>:[<teamName>] [<tenNumber>] [<bitsNumber>] [号] [<behavior>] [<result>];
+
+<teamName>: 主队!id(0)|客队!id(1)|青队!id(2)|蓝队!id(3)|紫队!id(4)|白队!id(5)|黑队!id(6)|红队!id(7)|橙队!id(8)|黄队!id(9)|粉队!id(10)|绿队!id(11)|花队!id(12);
+<bitsNumber>: 0!id(0)|零!id(0)|1!id(1)|一!id(1)|2!id(2)|二!id(2)|3!id(3)|三!id(3)|4!id(4)|四!id(4)|5!id(5)|五!id(5)|6!id(6)|六!id(6)|7!id(7)|七!id(7)|8!id(8)|八!id(8)|9!id(9)|九!id(9)|10!id(10)|十!id(10);
+<tenNumber>: 十!id(10)|二十!id(20)|三十!id(30)|四十!id(40)|五十!id(50)|六十!id(60)|七十!id(70)|八十!id(80)|九十!id(90);
+<behavior>: 暂停!id(0)|罚篮!id(1)|罚球!id(1)|两分!id(2)|二分!id(2)|三分!id(3)|进攻篮板!id(4)|防守篮板!id(5)|抢断!id(6)|失误!id(7)|盖帽!id(8)|助攻!id(9)|犯规!id(10)|下场!id(11)|上场!id(12);
+<result>: 中!id(1)|不中!id(0);

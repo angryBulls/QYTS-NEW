@@ -1,0 +1,6 @@
+framework module Pods_QYTS {
+  umbrella header "Pods-QYTS-umbrella.h"
+
+  export *
+  module * { export * }
+}

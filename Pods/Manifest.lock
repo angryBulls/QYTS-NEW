@@ -1,0 +1,63 @@
+PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - FDFullscreenPopGesture (1.1)
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
+  - LCActionSheet (2.5.1):
+    - Masonry (~> 1.0.1)
+  - Masonry (1.0.2)
+  - MJExtension (3.0.13)
+  - MJRefresh (3.1.12)
+  - RBBAnimation (0.4.0)
+  - SDWebImage (3.7.6):
+    - SDWebImage/Core (= 3.7.6)
+  - SDWebImage/Core (3.7.6)
+  - SVProgressHUD (2.0.3)
+  - UMengAnalytics (4.1.0)
+  - YTKKeyValueStore (0.1.2):
+    - FMDB (~> 2.0)
+
+DEPENDENCIES:
+  - AFNetworking (~> 3.1.0)
+  - FDFullscreenPopGesture (~> 1.1)
+  - LCActionSheet (~> 2.5.1)
+  - MJExtension (~> 3.0.10)
+  - MJRefresh
+  - RBBAnimation (= 0.4.0)
+  - SDWebImage (~> 3.7.5)
+  - SVProgressHUD
+  - UMengAnalytics
+  - YTKKeyValueStore
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  FDFullscreenPopGesture: a8a620179e3d9c40e8e00256dcee1c1a27c6d0f0
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  LCActionSheet: 8f0d344225461d686adf6719820d43b2062a53f3
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  MJExtension: 5932755f451458eefa24239358817f8d291240c7
+  MJRefresh: b96cdb21c4aa75a7b07654311ab2f315c497e806
+  RBBAnimation: 4b2d66f6d993febce63cd564da934985313b9c59
+  SDWebImage: c325cf02c30337336b95beff20a13df489ec0ec9
+  SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
+  UMengAnalytics: 19b28253793d77dff10fb7d502faad1fb6b8ce4a
+  YTKKeyValueStore: 4d002941540dd5108fa23009b71e0f2f937f7a0f
+
+PODFILE CHECKSUM: 7609edc5460d87758417301fd1c2b1f1a420787c
+
+COCOAPODS: 1.2.0

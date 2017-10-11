@@ -1,0 +1,47 @@
+//
+//  QYTS.pch
+//  QYTS
+//
+//  Created by lxd on 2017/7/6.
+//  Copyright © 2017年 longcai. All rights reserved.
+//
+
+#ifndef QYTS_pch
+#define QYTS_pch
+
+#ifdef __OBJC__
+
+#import "AppDelegate.h"
+
+// global define
+#import "SimpleNSLog.h"
+#import "QYTSDefines.h"
+
+// network
+#import "TS_URL_Header.h"
+#import "AFNetworking.h"
+#import "TSNetworkManger.h"
+#import "TSNetworkManger+CBO.h"
+
+// category
+#import "UIView+SetRect.h"
+#import "UIColor+UIColor.h"
+#import "NSString+Hash.h"
+
+// third
+#import "SVProgressHUD.h"
+#import "MJExtension.h"
+
+// Utility class
+#import "UIActivityIndicatorView+Extension.h"
+#import "TSToolsMethod.h"
+#import "TSUserInfoModelBCBC.h"
+#import "TSUserInfoModelCBO.h"
+#import "TSUserInfoModelNormal.h"
+#import "TSCalculationTool.h"
+#endif
+
+// 数据库操作工具类
+#import "TSDBManager.h"
+
+#endif /* QYTS_pch */

@@ -1,0 +1,15 @@
+#BNF+IAT 1.0 UTF-8;
+!grammar basketballSample;
+
+!slot <teamName>;
+!slot <number>;
+!slot <behavior>;
+!slot <result>;
+!start <statistics>;
+
+<statistics>:<teamName> <number> <behavior> [<result>];
+
+<teamName>: 主队|客队;
+<number>: 0号!id(0)|1号!id(1)|2号!id(2)|3号!id(3)|4号!id(4)|5号!id(5)|6号!id(6)|7号!id(7)|8号!id(8)|9号!id(9)|十号!id(10)|十一号!id(11)|十二号!id(12)|十三号!id(13)|十四号!id(14)|十五号!id(15)|十六号!id(16)|十七号!id(17)|十八号!id(18)|十九号!id(19)|二十号!id(20)|二十一号!id(21)|二十二号!id(22)|二十三号!id(23)|二十四号!id(24)|二十五号!id(25)|二十六号!id(26)|二十七号!id(27)|二十八号!id(28)|二十九号!id(29)|三十号!id(30)|三十一号!id(31)|三十二号!id(32)|三十三号!id(33)|三十四号!id(34)|三十五号!id(35)|三十六号!id(36)|三十七号!id(37)|三十八号!id(38)|三十九号!id(39)|四十号!id(40)|四十一号!id(41)|四十二号!id(42)|四十三号!id(43)|四十四号!id(44)|四十五号!id(45)|四十六号!id(46)|四十七号!id(47)|四十八号!id(48)|四十九号!id(49)|五十号!id(50);
+<behavior>: 进攻篮板|防守篮板|抢断|失误|盖帽|助攻|犯规|罚篮|两分投篮|三分投篮;
+<result>: 中|不中;
