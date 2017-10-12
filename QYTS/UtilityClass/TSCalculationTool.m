@@ -497,14 +497,14 @@
         [ColorArray enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([subArray[1] isEqualToString:gameCheckDict[@"teamColorH"]]) {
                 teamColorH = [TSToolsMethod colorWithHexString:subArray[1]];
-                if (10 == idx) { // 如果颜色是其他
+                if ([subArray[0] isEqualToString:@"其他"]) { // 如果颜色是其他
                     teamColorH = [UIColor clearColor];
                 }
             }
             
             if ([subArray[1] isEqualToString:gameCheckDict[@"teamColorG"]]) {
                 teamColorG = [TSToolsMethod colorWithHexString:subArray[1]];
-                if (10 == idx) {
+                if ([subArray[0] isEqualToString:@"其他"]) { // 如果颜色是其他
                     teamColorG = [UIColor clearColor];
                 }
             }

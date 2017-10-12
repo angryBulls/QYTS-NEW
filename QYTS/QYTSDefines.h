@@ -98,7 +98,7 @@ objectForInfoDictionaryKey:@"CFBundleShortVersionString"]
 static NSString * const ServiceTelephone = @"4006313677";
 
 //#define ColorArray @[@[@"青色", TSHEXCOLOR(0x299af0)], @[@"蓝色", TSHEXCOLOR(0x0c29ff)], @[@"紫色", TSHEXCOLOR(0x8b00ff)], @[@"白色", TSHEXCOLOR(0xffffff)], @[@"黑色", TSHEXCOLOR(0x181818)], @[@"红色", TSHEXCOLOR(0xf03535)], @[@"橙色", TSHEXCOLOR(0xffa500)], @[@"黄色", TSHEXCOLOR(0xecdd34)], @[@"绿色", TSHEXCOLOR(0x30e45f)], @[@"其他", TSHEXCOLOR(0xffffff)], @[@"无", TSHEXCOLOR(0xffffff)]]
-#define ColorArray @[@[@"青色", @"299af0"], @[@"蓝色", @"c29ff"], @[@"紫色", @"8b00ff"], @[@"白色", @"ffffff"], @[@"黑色", @"181818"], @[@"红色", @"f03535"], @[@"橙色", @"ffa500"], @[@"黄色", @"ecdd34"], @[@"粉色", @"ffc0cb"], @[@"绿色", @"30e45f"], @[@"其他", @"ffffff"], @[@"无", @"ffffff"]]
+#define ColorArray @[@[@"青色", @"299af0"], @[@"蓝色", @"c29ff"], @[@"紫色", @"8b00ff"], @[@"白色", @"ffffff"], @[@"黑色", @"181818"], @[@"红色", @"f03535"], @[@"橙色", @"ffa500"], @[@"黄色", @"ecdd34"], @[@"粉色", @"ffc0cb"], @[@"绿色", @"30e45f"], @[@"其他", @"000000"], @[@"无", @"ffffff"]]
 
 static NSString * const CurrentLoginUserType = @"CurrentLoginUserType";
 

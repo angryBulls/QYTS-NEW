@@ -118,7 +118,7 @@
         button.layer.borderColor = [hostGuestTeamColorarray[0] CGColor];
         [button setTitleColor:hostGuestTeamColorarray[0] forState:UIControlStateNormal];
         
-        if (hostGuestTeamColorarray[0] == [UIColor clearColor]) {
+        if (CGColorEqualToColor([hostGuestTeamColorarray[0] CGColor], [UIColor clearColor].CGColor)) {
             UIImage *image = [UIImage imageNamed:@"select_color_other_circle"];
             UIImageView *circleImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, numbBtnWH, numbBtnWH)];
             circleImageView.image = image;
