@@ -163,22 +163,39 @@
     [playerStatisticsArray enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([[obj stringByReplacingOccurrencesOfString:BehaviorNumb withString:@""] isEqualToString:[NSString stringWithFormat:@"%@", insertDBDict[BnfBehaviorType]]]) {
             newQueryPlayerDict[obj] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[obj] integerValue] + count];
+            if ([newQueryPlayerDict[obj] integerValue]<0) {
+                newQueryPlayerDict[obj] = @"0";
+            }
+            
             
             if ([obj isEqualToString:FreeThrow]) { // 如果是罚篮
                 if (1 == [insertDBDict[BnfResultType] intValue]) { // 命中数+1
                     newQueryPlayerDict[FreeThrowHit] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[FreeThrowHit] integerValue] + count];
+                    if ([newQueryPlayerDict[FreeThrowHit] integerValue]<0) {
+                        newQueryPlayerDict[FreeThrowHit] = @"0";
+                    }
                 }
             } else if ([obj isEqualToString:OnePoints]) { // 如果是1分
                 if (1 == [insertDBDict[BnfResultType] intValue]) { // 命中数+1
                     newQueryPlayerDict[OnePointsHit] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[OnePointsHit] integerValue] + count];
+                    if ([newQueryPlayerDict[OnePointsHit] integerValue]<0) {
+                        newQueryPlayerDict[OnePointsHit] = @"0";
+                    }
+
                 }
             } else if ([obj isEqualToString:TwoPoints]) { // 如果是2分
                 if (1 == [insertDBDict[BnfResultType] intValue]) { // 命中数+1
                     newQueryPlayerDict[TwoPointsHit] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[TwoPointsHit] integerValue] + count];
+                    if ([newQueryPlayerDict[TwoPointsHit] integerValue]<0) {
+                        newQueryPlayerDict[TwoPointsHit] = @"0";
+                    }
                 }
             } else if ([obj isEqualToString:ThreePoints]) { // 如果是3分
                 if (1 == [insertDBDict[BnfResultType] intValue]) { // 命中数+1
                     newQueryPlayerDict[ThreePointsHit] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[ThreePointsHit] integerValue] + count];
+                    if ([newQueryPlayerDict[ThreePointsHit] integerValue]<0) {
+                        newQueryPlayerDict[ThreePointsHit] = @"0";
+                    }
                 }
             }
         }

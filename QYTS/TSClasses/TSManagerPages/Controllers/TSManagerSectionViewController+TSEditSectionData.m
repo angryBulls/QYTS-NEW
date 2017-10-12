@@ -140,5 +140,7 @@
     [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationRight];
     // 通知语音识别页面，球员数据被修改
     [[NSNotificationCenter defaultCenter] postNotificationName:PlayerDataDidChanged object:nil];
+    
+    
 }
 @end

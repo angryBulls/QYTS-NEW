@@ -167,7 +167,6 @@
         if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])) { // 换人语音识别
             [self.voicePlayersView updatePlayersStatus];
         }
-        
         [self.insertDBDictArray removeLastObject];
         
         [self p_updateStatisticsData];
@@ -175,6 +174,8 @@
     
     [self.dataShowArray removeLastObject];
     [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.dataShowArray.count inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    
+    
     [self scrollTableToFoot:YES];
 }
 
@@ -339,6 +340,8 @@
 }
 
 - (void)p_playerDataDidChanged:(NSNotification *)notif {
+    
+    
     [self p_updateStatisticsData];
 }
 

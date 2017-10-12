@@ -59,6 +59,7 @@
             if (1 == [gameTableDict[GameStatus] intValue]) {
                 [SVProgressHUD showInfoWithStatus:GameOver];
             } else {
+                
                 [strongSelf.navigationController popViewControllerAnimated:YES];
             }
         }
