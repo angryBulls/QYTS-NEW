@@ -383,7 +383,7 @@
 - (NSString *)getPlayerIdWithinsertDBDict:(NSDictionary *)insertDBDict { // 根据GameId、主客队类型和球员号码获取本条语音统计数据的playerId
     NSString *playerIdKey = [NSString stringWithFormat:@"%@+%@", insertDBDict[BnfTeameType], insertDBDict[NumbResultStr]];
     NSMutableArray *playerIdArray = [NSMutableArray array];
-    playerIdArray = [self getObjectById:GameId fromTable:PlayerIdTable];
+    playerIdArray = [self.store getObjectById:GameId fromTable:PlayerIdTable];
     
     __block NSString *playerId = @"";
     [playerIdArray enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL * _Nonnull stop) {
