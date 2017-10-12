@@ -48,10 +48,10 @@
     // 获取主客队颜色
     TSCalculationTool *calculationTool = [[TSCalculationTool alloc] init];
     NSMutableArray *hostGuestTeamColorarray = [[calculationTool getHostTeamAndGuestTeamColor] mutableCopy];
-    if (hostGuestTeamColorarray[0] == [UIColor whiteColor]) {
+    if (hostGuestTeamColorarray[0] == [UIColor whiteColor] || hostGuestTeamColorarray[0] == [UIColor clearColor]) {
         hostGuestTeamColorarray[0] = TSHEXCOLOR(0xF9A204);
     }
-    if (hostGuestTeamColorarray[1] == [UIColor whiteColor]) {
+    if (hostGuestTeamColorarray[1] == [UIColor whiteColor] || hostGuestTeamColorarray[1] == [UIColor clearColor]) {
         hostGuestTeamColorarray[1] = TSHEXCOLOR(0x30E45F);
     }
     
