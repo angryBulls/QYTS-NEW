@@ -18,8 +18,13 @@
 #import "VoicePlayersView.h"
 #import "TSAbstainedView.h"
 #import "VoiceBgView.h"
+#import "iflyMSC/IFlyMSC.h"
+#import "PcmPlayer.h"
 
-@interface VoiceStatisticsViewController () <TSSpeechRecognizerDelegate, LCActionSheetDelegate>
+#import <Foundation/Foundation.h>
+#import<AVFoundation/AVFoundation.h>
+
+@interface VoiceStatisticsViewController () <TSSpeechRecognizerDelegate, LCActionSheetDelegate,UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) TSSpeechRecognizer *speechRecognizer;
 @property (nonatomic, weak) VoiceBgView *centerView;
 @property (nonatomic, weak) TSVolumeView *volumeView;
@@ -30,6 +35,11 @@
 @property (nonatomic, weak) UIButton *submitSectionBtn;
 @property (nonatomic, weak) LCActionSheet *actionSheet;
 @property (nonatomic, weak) VoicePlayersView *voicePlayersView; // 显示场上球员号码
+@property (nonatomic ,strong) UITableView *tb;
+@property (nonatomic ,strong) NSMutableArray *pcmArr;
+
+@property (nonatomic,strong) AVAudioPlayer *player;
+
 @end
 
 @implementation VoiceStatisticsViewController
@@ -63,11 +73,20 @@
     return _tSDBManager;
 }
 
+-(NSMutableArray *)pcmArr{
+    if (_pcmArr == nil) {
+        _pcmArr = [NSMutableArray array];
+    }
+    return _pcmArr;
+}
+
 #pragma mark - system method ************************************************************************************
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self addTopViewWithPageType:PageTypeVoice];
+    
+    [self p_getPcmDateSouce];
     
     [self p_createCenterView];
     
@@ -109,6 +128,27 @@
 }
 
 #pragma mark - custom method ************************************************************************************
+
+-(void)p_getPcmDateSouce{
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths objectAtIndex:0];
+    NSArray *fileList= [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+    for (NSString *fileName in fileList)
+    {
+        if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
+            NSString *luYinName = [fileName stringByReplacingOccurrencesOfString:@".pcm" withString:@"录音"];
+            
+            NSArray *arr = @[luYinName,[NSString stringWithFormat:@"%@/%@",path,fileName]];
+            [self.pcmArr addObject:arr];
+            
+        }
+    }
+    
+    
+    
+}
+
 - (void)p_createCenterView {
     // add players view
     CGFloat playersViewX = W(10);
@@ -127,20 +167,32 @@
     [self.view addSubview:centerView];
     self.centerView = centerView;
     
-    self.tableView.frame = CGRectMake(0, H(37), self.centerView.width, self.centerView.height - H(37));
+    self.tableView.frame = CGRectMake(0, H(37), self.centerView.width*3/5, self.centerView.height - H(37));
     TSAbstainedView *abstainedView = [[TSAbstainedView alloc] initWithFrame:CGRectMake(0, 0, self.centerView.width, H(37)) abstentionSuccessBlock:^{ // 弃权成功
         [self p_updateStatisticsData];
         [self p_checkGameStatus];
     }];
     [self.centerView addSubview:abstainedView];
-    
+    self.tableView.tag = 999;
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, H(50), 0);
     self.tableView.rowHeight = H(38);
     self.tableView.backgroundColor = centerView.backgroundColor;
     [centerView addSubview:self.tableView];
+    
+    _tb = [[UITableView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5, H(37), self.centerView.width*2/5,  self.centerView.height - H(37)- H(37)) style:UITableViewStylePlain];
+    _tb.separatorStyle = UITableViewCellSeparatorStyleNone;
+    _tb.showsVerticalScrollIndicator = 0;
+    
+    _tb.tag = 1000;
+    _tb.delegate = self;
+    _tb.dataSource = self;
+    [centerView addSubview:_tb];
+    _tb.backgroundColor = centerView.backgroundColor;
+    
+    
     [self scrollTableToFoot:YES];
     
-    // createVolumView
+    
     CGFloat volumeViewH = H(50);
     CGFloat volumeViewW = W(100);
     TSVolumeView *volumeView = [[TSVolumeView alloc] initWithFrame:CGRectMake(0, centerView.height - volumeViewH - H(11.5), volumeViewW, volumeViewH)];
@@ -252,9 +304,6 @@
 }
 
 - (void)p_beginRecordVoice:(UIButton *)button { //开始录音
-//    if ([self.topView.startBtn.currentTitle containsString:@"开"] && self.topView.currentSecond != 0) {
-//        return;
-//    }
     [self.speechRecognizer startListening];
     self.volumeView.hidden = NO;
 }
@@ -281,15 +330,45 @@
 
 #pragma mark - UITableViewDataSource ************************************************************************************
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.dataShowArray.count;
+    if (tableView.tag == 999) {
+        return self.dataShowArray.count;
+        
+    }
+    return _pcmArr.count;
 }
 
 #pragma mark - UITableViewDelegate ************************************************************************************
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    VoiceStatisticsCell *cell = [VoiceStatisticsCell cellWithTableView:tableView];
-    cell.titleName = self.dataShowArray[indexPath.row];
+    if (tableView.tag == 999) {
+        VoiceStatisticsCell *cell = [VoiceStatisticsCell cellWithTableView:tableView];
+        cell.titleName = self.dataShowArray[indexPath.row];
+        
+        return cell;
+        
+    }
     
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    }
+    cell.backgroundColor = [UIColor clearColor];
+    cell.textLabel.text = _pcmArr[indexPath.row][0];
+    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    cell.textLabel.textColor = [UIColor redColor];
+    cell.textLabel.font = [UIFont systemFontOfSize:H(13)];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView.tag != 999) {
+        //读取声音
+        NSString *path = _pcmArr[indexPath.row][1];
+        _player = [[AVAudioPlayer alloc] init];
+        
+        
+        
+    }
 }
 
 #pragma mark - TSSpeechRecognizerDelegate

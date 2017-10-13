@@ -271,6 +271,7 @@ static NSString * const TS_USER_INFO_NORMAL = @"ts_user_info_normal";
     NSArray *appArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     if ([appArray count] > 0) {
         documentsPath = [appArray objectAtIndex:0];
+        
     }
     NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
     NSFileManager *fileManager = [NSFileManager defaultManager];

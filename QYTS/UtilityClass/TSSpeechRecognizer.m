@@ -261,15 +261,39 @@
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
         DDLog(@"识别开启成功");
+
+       
+        
+        
+        
         [self.curResult setString:@""];
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
     }
 }
 - (void)stopListening {
+    
     [IFlySpeechRecognizer.sharedInstance stopListening];
+    //保存录音文件
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HH:mm:ss"];
+    NSString *date = [formatter stringFromDate:[NSDate date]];
+    NSLog(@"date = %@",date);
+    
+
+    [IFlySpeechRecognizer.sharedInstance setParameter:[NSString stringWithFormat:@"%@.pcm",date] forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
+    
+
+    
+
+    
+    
 }
 - (void)cancel {
+    
     [IFlySpeechRecognizer.sharedInstance cancel];
+    
+    
+    
 }
 @end

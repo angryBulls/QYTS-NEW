@@ -167,7 +167,6 @@
                 newQueryPlayerDict[obj] = @"0";
             }
             
-            
             if ([obj isEqualToString:FreeThrow]) { // 如果是罚篮
                 if (1 == [insertDBDict[BnfResultType] intValue]) { // 命中数+1
                     newQueryPlayerDict[FreeThrowHit] = [NSString stringWithFormat:@"%ld", [newQueryPlayerDict[FreeThrowHit] integerValue] + count];

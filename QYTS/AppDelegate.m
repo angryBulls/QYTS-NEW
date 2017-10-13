@@ -102,6 +102,13 @@
     NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
     //所有服务启动前，需要确保执行createUtility
     [IFlySpeechUtility createUtility:initString];
+    
+    
+//    IFlyPcmRecorder *recorder = [IFlyPcmRecorder sharedInstance];
+//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    NSString *docDir = [paths objectAtIndex:0];
+//    NSString *createPath = [NSString stringWithFormat:@"%@/pcm",docDir];
+//    [recorder setSaveAudioPath:createPath];
 }
 
 - (void)setAdvertisementBeRootView {

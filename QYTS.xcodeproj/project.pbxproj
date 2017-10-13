@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2016F9FC7BD08CF280E91AF1 /* Pods_QYTS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 428FD8499DB7C037B96757F7 /* Pods_QYTS.framework */; };
+		430500721F90A25B00F541E7 /* PcmPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 430500701F90A25B00F541E7 /* PcmPlayer.m */; };
 		C0A36A351F89217600A33AA7 /* PreGameCheckCBOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A36A341F89217600A33AA7 /* PreGameCheckCBOViewController.m */; };
 		FA00E5B81F60E1CD00047D88 /* TSAbstainedView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA00E5B71F60E1CD00047D88 /* TSAbstainedView.m */; };
 		FA0B45341F2725DB003E8331 /* TSCalculationTool.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0B45331F2725DB003E8331 /* TSCalculationTool.m */; };
@@ -217,6 +218,9 @@
 
 /* Begin PBXFileReference section */
 		428FD8499DB7C037B96757F7 /* Pods_QYTS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QYTS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4305006F1F90A25B00F541E7 /* PcmPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcmPlayer.h; sourceTree = "<group>"; };
+		430500701F90A25B00F541E7 /* PcmPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PcmPlayer.m; sourceTree = "<group>"; };
+		430500711F90A25B00F541E7 /* PcmPlayerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcmPlayerDelegate.h; sourceTree = "<group>"; };
 		9F98C942198926EE8E02DA24 /* Pods-QYTS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QYTS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QYTS/Pods-QYTS.debug.xcconfig"; sourceTree = "<group>"; };
 		C0A36A331F89217600A33AA7 /* PreGameCheckCBOViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreGameCheckCBOViewController.h; sourceTree = "<group>"; };
 		C0A36A341F89217600A33AA7 /* PreGameCheckCBOViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreGameCheckCBOViewController.m; sourceTree = "<group>"; };
@@ -1447,6 +1451,9 @@
 		FAC1E6661F0DD31600CEC64A /* UtilityClass */ = {
 			isa = PBXGroup;
 			children = (
+				4305006F1F90A25B00F541E7 /* PcmPlayer.h */,
+				430500701F90A25B00F541E7 /* PcmPlayer.m */,
+				430500711F90A25B00F541E7 /* PcmPlayerDelegate.h */,
 				FA32CFE41F56632F00772DB8 /* UserInfoManager */,
 				FA12A9701F455CCD00B9915A /* WeiXin */,
 				FAC1E66D1F0DD31600CEC64A /* Runtime */,
@@ -1983,6 +1990,7 @@
 				FA2803031F7A2E9500950C0E /* Reachability.m in Sources */,
 				FAC1E69F1F0E0E1700CEC64A /* UIBarButtonItem+Extension.m in Sources */,
 				FA298E851F4D772F00F5AA5B /* TSGameDataCell.m in Sources */,
+				430500721F90A25B00F541E7 /* PcmPlayer.m in Sources */,
 				FA0E40951F18A389009AD283 /* TSCreateGameGTViewController.m in Sources */,
 				FA32B33E1F7902820078D08D /* TSNetworkManger+CBO.m in Sources */,
 				FA15457E1F592CD700BFBD39 /* AccountSetViewController.m in Sources */,
