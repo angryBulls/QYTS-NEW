@@ -11,8 +11,8 @@
 #import "TSVoiceViewModel.h"
 
 @interface TSAbstainedView () <LCActionSheetDelegate>
-@property (nonatomic, weak) UIButton *homeAbstainedBtn;
-@property (nonatomic, weak) UIButton *awayAbstainedBtn;
+@property (nonatomic, weak) UILabel *homeAbstainedBtn;
+@property (nonatomic, weak) UILabel *awayAbstainedBtn;
 @property (nonatomic, weak) LCActionSheet *actionSheet;
 @property (nonatomic, copy) AbstentionSuccessBlock abstentionSuccessBlock;
 @end
@@ -28,19 +28,23 @@
 }
 
 - (void)p_AddSubViews {
-    UIButton *homeAbstainedBtn = [self p_createButtonWithTitle:@"主队弃权"];
+    UILabel *homeAbstainedBtn = [self p_createButtonWithTitle:@"语音命令:"];
     homeAbstainedBtn.x = W(9);
     homeAbstainedBtn.y = (self.height - homeAbstainedBtn.height)*0.5;
-    [homeAbstainedBtn addTarget:self action:@selector(p_homeAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
+//    [homeAbstainedBtn addTarget:self action:@selector(p_homeAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:homeAbstainedBtn];
     self.homeAbstainedBtn = homeAbstainedBtn;
     
-    UIButton *awayAbstainedBtn = [self p_createButtonWithTitle:@"客队弃权"];
-    awayAbstainedBtn.x = self.width - awayAbstainedBtn.width - W(9);
+    UILabel *awayAbstainedBtn = [self p_createButtonWithTitle:@"未识别录音:"];
+    awayAbstainedBtn.x = self.width*3/5 + W(9);
     awayAbstainedBtn.y = homeAbstainedBtn.y;
-    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
+//    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:awayAbstainedBtn];
     self.awayAbstainedBtn = awayAbstainedBtn;
+    
+    
+    
+    
     
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
@@ -54,40 +58,48 @@
     }
 }
 
-- (void)p_homeAbstainedBtnClick {
-    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:@"取消"
-                                             otherButtonTitles:@"主队弃权", nil];
-    actionSheet.tag = 0;
-    [actionSheet show];
-    self.actionSheet = actionSheet;
-}
+//- (void)p_homeAbstainedBtnClick {
+//    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
+//                                                      delegate:self
+//                                             cancelButtonTitle:@"取消"
+//                                             otherButtonTitles:@"主队弃权", nil];
+//    actionSheet.tag = 0;
+//    [actionSheet show];
+//    self.actionSheet = actionSheet;
+//}
+//
+//- (void)p_awayAbstainedBtnClick {
+//    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
+//                                                      delegate:self
+//                                             cancelButtonTitle:@"取消"
+//                                             otherButtonTitles:@"客队弃权", nil];
+//    actionSheet.tag = 1;
+//    [actionSheet show];
+//    self.actionSheet = actionSheet;
+//}
 
-- (void)p_awayAbstainedBtnClick {
-    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:@"取消"
-                                             otherButtonTitles:@"客队弃权", nil];
-    actionSheet.tag = 1;
-    [actionSheet show];
-    self.actionSheet = actionSheet;
-}
-
-- (UIButton *)p_createButtonWithTitle:(NSString *)title {
-    CGFloat buttonW = W(66);
+- (UILabel *)p_createButtonWithTitle:(NSString *)title {
+    CGFloat buttonW = W(80);
     CGFloat buttonH = H(20);
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(0, 0, buttonW, buttonH);
-    button.backgroundColor = TSHEXCOLOR(0x2B91CF);
-    button.layer.masksToBounds = YES;
-    button.layer.cornerRadius = W(5);
-    [button setTitleColor:TSHEXCOLOR(0xFFFFFF) forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont systemFontOfSize:W(13.0)];
-    [button setTitle:title forState:UIControlStateNormal];
+//    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    UILabel *lable = [[UILabel alloc]init];
+    lable.frame = CGRectMake(0, 0, buttonW, buttonH);
+//    button.backgroundColor = TSHEXCOLOR(0x2B91CF);
+//    button.layer.masksToBounds = YES;
+//    button.layer.cornerRadius = W(5);
+//    [button setTitleColor:TSHEXCOLOR(0xFFFFFF) forState:UIControlStateNormal];
+//    button.titleLabel.font = [UIFont systemFontOfSize:W(13.0)];
+//    [button setTitle:title forState:UIControlStateNormal];
+    lable.textColor = TSHEXCOLOR(0x01102D);
+    lable.font = [UIFont systemFontOfSize:W(13.0)];
+    lable.text = title;
     
-    return button;
+    return lable;
 }
+
+
+
+
 
 - (void)actionSheet:(LCActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (self.actionSheet) {

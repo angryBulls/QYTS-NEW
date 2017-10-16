@@ -138,6 +138,7 @@
     
     for (NSString *key in dic) {
         [result appendFormat:@"%@",key];
+        
         if([self.engineType isEqualToString:[IFlySpeechConstant TYPE_LOCAL]]) {
             NSString * resultFromJson =  [ISRDataHelper stringFromJson:result];
             [resultString appendString:resultFromJson];
@@ -148,7 +149,7 @@
     }
     
     if (isLast) {
-//        DDLog(@"result is:%@",self.curResult);
+
     }
     [self.curResult appendString:resultString];
     
@@ -165,7 +166,8 @@
             [self.delegate onResultsString:returnString insertDBDict:insertDBDict recognizerResult:YES];
         }
     } saveDBStatusFailBlock:^(NSString *error) {
-//        self.curResult = [[NSMutableString alloc] initWithString:@""];
+        
+        [self saveVedio];
         [self.delegate onResultsString:self.curResult insertDBDict:@{} recognizerResult:NO];
     }];
     
@@ -236,6 +238,7 @@
         [_iFlySpeechRecognizer setParameter:@"1800" forKey:[IFlySpeechConstant VAD_EOS]];
         [_iFlySpeechRecognizer setParameter:@"utf-8" forKey:@"result_encoding"];
         [_iFlySpeechRecognizer setParameter:@"json" forKey:[IFlySpeechConstant RESULT_TYPE]];
+//        [_iFlySpeechRecognizer setParameter:@"8000" forKey:[IFlySpeechConstant SAMPLE_RATE]];
     }
     
     //开始构建
@@ -256,16 +259,29 @@
     } grammarType:self.grammarType grammarContent:grammarContent];
 }
 
+//
+-(void)saveVedio{
+    
+    //保存录音文件
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HH:mm:ss"];
+    NSString *date = [formatter stringFromDate:[NSDate date]];
+    NSLog(@"date = %@",date);
+    
+    IFlySpeechRecognizer *fly =   [IFlySpeechRecognizer sharedInstance];
+    [fly setParameter:[NSString stringWithFormat:@"%@000.pcm",date] forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
+    
+    
+    
+    
+}
+
 #pragma mark - return method ************************************************************************
 - (void)startListening {
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
         DDLog(@"识别开启成功");
 
-       
-        
-        
-        
         [self.curResult setString:@""];
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
@@ -274,19 +290,7 @@
 - (void)stopListening {
     
     [IFlySpeechRecognizer.sharedInstance stopListening];
-    //保存录音文件
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"HH:mm:ss"];
-    NSString *date = [formatter stringFromDate:[NSDate date]];
-    NSLog(@"date = %@",date);
-    
-
-    [IFlySpeechRecognizer.sharedInstance setParameter:[NSString stringWithFormat:@"%@.pcm",date] forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
-    
-
-    
-
-    
+    DDLog(@"结束识别");
     
 }
 - (void)cancel {

@@ -38,12 +38,15 @@
 }
 
 - (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock {
+    
     if (0 == resultDict.count) {
+        saveDBStatusFailBlock(@"");
         return;
     }
     
     NSArray *restltArray = resultDict[@"ws"];
     if (0 == restltArray.count) {
+        saveDBStatusFailBlock(@"");
         return;
     }
     
@@ -109,6 +112,7 @@
     NSString *playerId = [self getPlayerIdWithinsertDBDict:insertDBDict];
     if (0 == playerId.length) {
         DDLog(@"该球员id不存在数据库表中！！！！！！！！");
+        saveDBStatusFailBlock(@"");
         return;
     }
     

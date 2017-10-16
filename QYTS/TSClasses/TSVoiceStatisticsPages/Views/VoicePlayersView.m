@@ -10,14 +10,20 @@
 #import "TSInstructionsView.h"
 #import "CustomUIButton.h"
 #import "ManualTSView.h"
+#import "LCActionSheet.h"
 
 @interface VoicePlayersView ()
 @property (nonatomic, weak) UILabel *hostPlayerLab;
 @property (nonatomic, weak) UILabel *guestPlayerLab;
-@property (nonatomic, weak) UILabel *instructionsLab;
+@property (nonatomic, weak) UIButton *instructionsLab;
 
 @property (nonatomic, strong) NSMutableArray *hostNumbArray;
 @property (nonatomic, strong) NSMutableArray *guestNumbArray;
+
+@property (nonatomic ,strong) UIButton *homeAbstainedBtn;
+@property (nonatomic ,strong) UIButton *awayAbstainedBtn;
+@property (nonatomic ,strong) LCActionSheet *actionSheet;
+
 @end
 
 @implementation VoicePlayersView
@@ -45,18 +51,19 @@
 
 - (void)p_setupSubViews {
     // add host players、guest players、instructions label
-    CGFloat labelY = H(11.5);
-    CGFloat labelW = self.width/3;
+    CGFloat labelY = H(9);
+    CGFloat labelW = W(160/2);
     CGFloat labelH = H(13);
     
     UILabel *hostPlayerLab = [[UILabel alloc] initWithFrame:CGRectMake(0, labelY, labelW, labelH)];
+    
     hostPlayerLab.text = @"主队场上球员";
     hostPlayerLab.font = [UIFont systemFontOfSize:W(13.0)];
     hostPlayerLab.textColor = TSHEXCOLOR(0xb5d0ff);
     [self addSubview:hostPlayerLab];
     self.hostPlayerLab = hostPlayerLab;
     
-    UILabel *guestPlayerLab = [[UILabel alloc] initWithFrame:CGRectMake(2*labelW, labelY, labelW, labelH)];
+    UILabel *guestPlayerLab = [[UILabel alloc] initWithFrame:CGRectMake(self.width - labelW, labelY, labelW, labelH)];
     guestPlayerLab.text = @"客队场上球员";
     guestPlayerLab.font = [UIFont systemFontOfSize:W(13.0)];
     guestPlayerLab.textColor = TSHEXCOLOR(0xb5d0ff);
@@ -64,13 +71,36 @@
     [self addSubview:guestPlayerLab];
     self.guestPlayerLab = guestPlayerLab;
     
-//    UILabel *instructionsLab = [[UILabel alloc] initWithFrame:CGRectMake(hostPlayerLab.width, 0, labelW, labelH)];
-//    instructionsLab.text = @"使用说明";
-//    instructionsLab.font = [UIFont systemFontOfSize:W(13.0)];
-//    instructionsLab.textColor = TSHEXCOLOR(0xb5d0ff);
-//    instructionsLab.textAlignment = NSTextAlignmentCenter;
-//    [self addSubview:instructionsLab];
-//    self.instructionsLab = instructionsLab;
+    UIButton *instructionBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.width/2-W(150/4), H(5.5), W(150/2), H(38/2))];
+    
+    instructionBtn.adjustsImageWhenHighlighted = NO;
+    instructionBtn.layer.borderColor = TSHEXCOLOR(0xB5D0FF).CGColor;
+    instructionBtn.layer.borderWidth = W(1);
+    instructionBtn.layer.cornerRadius = W(5);
+    instructionBtn.titleLabel.font = [UIFont systemFontOfSize:W(13.0)];
+    [instructionBtn setTitleColor:TSHEXCOLOR(0xB5D0FF) forState:UIControlStateNormal];
+    instructionBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [instructionBtn setTitle:@"使用说明?" forState:UIControlStateNormal];
+    [instructionBtn addTarget:self action:@selector(p_instructionBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:instructionBtn];
+    self.instructionsLab = instructionBtn;
+    
+    
+    
+    UIButton *homeAbstainedBtn = [self p_createButtonWithTitle:@"弃权"];
+    homeAbstainedBtn.x = W(10) +labelW;
+    homeAbstainedBtn.y = H(10/2);
+    [homeAbstainedBtn addTarget:self action:@selector(p_homeAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:homeAbstainedBtn];
+    self.homeAbstainedBtn = homeAbstainedBtn;
+    
+    UIButton *awayAbstainedBtn = [self p_createButtonWithTitle:@"弃权"];
+    awayAbstainedBtn.x = self.width - labelW - W(10)-W(32);
+    awayAbstainedBtn.y = homeAbstainedBtn.y;
+    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:awayAbstainedBtn];
+    self.awayAbstainedBtn = awayAbstainedBtn;
+    
     
     // instructions button
 //    UIImage *image = [UIImage imageNamed:@"question_mark_Icon"];
@@ -173,6 +203,56 @@
     [self.layer addSublayer:dividLine];
     
     [self updatePlayersStatus];
+}
+
+
+- (UIButton *)p_createButtonWithTitle:(NSString *)title {
+    CGFloat buttonW = W(64/2);
+    CGFloat buttonH = H(38/2);
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = CGRectMake(0, 0, buttonW, buttonH);
+    button.layer.masksToBounds = YES;
+    button.layer.cornerRadius = W(5);
+    [button setTitleColor:TSHEXCOLOR(0xFF4769) forState:UIControlStateNormal];
+    button.layer.borderWidth = W(1);
+    button.layer.borderColor = TSHEXCOLOR(0xFF4769).CGColor;
+    button.titleLabel.font = [UIFont systemFontOfSize:W(13.0)];
+    [button setTitle:title forState:UIControlStateNormal];
+    
+    return button;
+}
+
+
+- (void)p_homeAbstainedBtnClick {
+    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
+                                                      delegate:self
+                                             cancelButtonTitle:@"取消"
+                                             otherButtonTitles:@"主队弃权", nil];
+    actionSheet.tag = 0;
+    [actionSheet show];
+    self.actionSheet = actionSheet;
+}
+
+- (void)p_awayAbstainedBtnClick {
+    LCActionSheet *actionSheet = [LCActionSheet sheetWithTitle:nil
+                                                      delegate:self
+                                             cancelButtonTitle:@"取消"
+                                             otherButtonTitles:@"客队弃权", nil];
+    actionSheet.tag = 1;
+    [actionSheet show];
+    self.actionSheet = actionSheet;
+}
+
+
+- (void)p_instructionBtnClick {
+    TSDBManager *tSDBManager = [[TSDBManager alloc] init];
+    NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
+    RuleType ruleType = RuleType5V5;
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+        ruleType = RuleType3V3;
+    }
+    TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) ruleType:ruleType];
+    [instView show];
 }
 
 - (void)p_questionBtnClick {

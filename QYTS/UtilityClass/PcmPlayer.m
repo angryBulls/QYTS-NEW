@@ -149,7 +149,13 @@ typedef struct Wavehead
     {
         NSLog(@"%@",err.localizedDescription);
     }
+    
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSError *errrr = nil;
+    [audioSession setCategory :AVAudioSessionCategoryPlayback error:&errrr];
+    
     self.player.delegate = self;
+    
     [self.player prepareToPlay];
     
 }

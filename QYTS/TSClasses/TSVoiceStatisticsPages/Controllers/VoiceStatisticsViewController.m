@@ -8,6 +8,7 @@
 
 #import "VoiceStatisticsViewController.h"
 #import "VoiceStatisticsCell.h"
+#import "VoiceStatisticsRecordingCell.h"
 #import "TSSegmentedView.h"
 #import "TSManagerViewController.h"
 #import "TSSpeechRecognizer.h"
@@ -20,7 +21,7 @@
 #import "VoiceBgView.h"
 #import "iflyMSC/IFlyMSC.h"
 #import "PcmPlayer.h"
-
+#import "TTSConfig.h"
 #import <Foundation/Foundation.h>
 #import<AVFoundation/AVFoundation.h>
 
@@ -38,11 +39,19 @@
 @property (nonatomic ,strong) UITableView *tb;
 @property (nonatomic ,strong) NSMutableArray *pcmArr;
 
+@property (nonatomic, strong) PcmPlayer *audioPlayer;
 @property (nonatomic,strong) AVAudioPlayer *player;
 
 @end
 
 @implementation VoiceStatisticsViewController
+- (PcmPlayer *)audioPlayer {
+    if (!_audioPlayer) {
+        _audioPlayer = [[PcmPlayer alloc] init];
+    }
+    return _audioPlayer;
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_playerDataDidChanged:) name:PlayerDataDidChanged object:nil];
@@ -73,12 +82,7 @@
     return _tSDBManager;
 }
 
--(NSMutableArray *)pcmArr{
-    if (_pcmArr == nil) {
-        _pcmArr = [NSMutableArray array];
-    }
-    return _pcmArr;
-}
+
 
 #pragma mark - system method ************************************************************************************
 - (void)viewDidLoad {
@@ -134,10 +138,11 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *path = [paths objectAtIndex:0];
     NSArray *fileList= [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+    self.pcmArr = [NSMutableArray array];
     for (NSString *fileName in fileList)
     {
         if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
-            NSString *luYinName = [fileName stringByReplacingOccurrencesOfString:@".pcm" withString:@"录音"];
+            NSString *luYinName = [fileName stringByReplacingOccurrencesOfString:@".pcm" withString:@""];
             
             NSArray *arr = @[luYinName,[NSString stringWithFormat:@"%@/%@",path,fileName]];
             [self.pcmArr addObject:arr];
@@ -178,6 +183,10 @@
     self.tableView.rowHeight = H(38);
     self.tableView.backgroundColor = centerView.backgroundColor;
     [centerView addSubview:self.tableView];
+    
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5-W(.5), 0, W(1), self.centerView.height)];
+    [centerView addSubview:lineView];
+    lineView.backgroundColor = TSHEXCOLOR(0x1B2A47);
     
     _tb = [[UITableView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5, H(37), self.centerView.width*2/5,  self.centerView.height - H(37)- H(37)) style:UITableViewStylePlain];
     _tb.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -347,26 +356,41 @@
         
     }
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    VoiceStatisticsRecordingCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[VoiceStatisticsRecordingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
+    
     cell.backgroundColor = [UIColor clearColor];
-    cell.textLabel.text = _pcmArr[indexPath.row][0];
-    cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    cell.textLabel.textColor = [UIColor redColor];
-    cell.textLabel.font = [UIFont systemFontOfSize:H(13)];
+    cell.mesArr = _pcmArr[indexPath.row];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
-
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (tableView.tag == 1000) {
+        return W(40);
+    }
+    return H(38);
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView.tag != 999) {
         //读取声音
         NSString *path = _pcmArr[indexPath.row][1];
-        _player = [[AVAudioPlayer alloc] init];
+        DDLog(@"current pcm path is:%@", path);
+        TTSConfig *instance = [TTSConfig sharedInstance];
+        NSError *error = nil;
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+        self.audioPlayer = [[PcmPlayer alloc] initWithFilePath:path sampleRate:[instance.sampleRate integerValue]];
+        [_audioPlayer play];
         
+        NSString *newPath = [path stringByReplacingOccurrencesOfString:@"000" withString:@"001"];
+        if ([path containsString:@"000"]) {
+            [[NSFileManager defaultManager] moveItemAtPath:path toPath:newPath error:nil];
+        }
         
+        [self p_getPcmDateSouce];
+        [_tb reloadData];
         
     }
 }
@@ -378,12 +402,25 @@
         
         if (self.dataShowArray.count > 0) {
             [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.dataShowArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
+            
             [self scrollTableToFoot:YES];
         }
+        
         
         [self.insertDBDictArray addObject:insertDBDict];
         
         [self p_updateStatisticsData];
+    }
+    else{
+        [self p_getPcmDateSouce];
+        [_tb reloadData];
+        
+        
+        if (_pcmArr.count) {
+            [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
+
+        
     }
 }
 
@@ -467,9 +504,32 @@
         [self.dataShowArray removeAllObjects];
         [self.insertDBDictArray removeAllObjects];
         [self.tableView reloadData];
+        //删除保存声音（所有）
+        [self.pcmArr removeAllObjects];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *path = [paths objectAtIndex:0];
+        NSFileManager *fileMgr = [NSFileManager defaultManager];
+        NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
+        NSLog(@"CachesPath is %@",path);
+        
+        for (NSString *fileName in fileList)
+        {
+            
+            if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
+                NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
+                BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
+                if (bRet) {
+                    NSError *err;
+                    [fileMgr removeItemAtPath:fileDir error:&err];
+                }
+            }
+        }
+        [_tb reloadData];
         
         // 每节数据提交成功后，初始化所有球员的上场时间
         [SVProgressHUD showInfoWithStatus:@"提交成功"];
+        
+        
         
         if (0 == [gameTableDict[GameStatus] intValue]) {
             [self p_updateCurrentStageIfSendDataSuccess];
