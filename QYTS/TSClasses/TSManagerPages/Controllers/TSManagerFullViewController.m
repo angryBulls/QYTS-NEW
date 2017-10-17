@@ -290,12 +290,12 @@
 }
 
 - (void)p_initLocalDataBase {
-    NSString *documentsPath = nil;
-    NSArray *appArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    documentsPath = [appArray objectAtIndex:0];
-    NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtPath:tsdbPath error:nil];
+//    NSString *documentsPath = nil;
+//    NSArray *appArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//    documentsPath = [appArray objectAtIndex:0];
+//    NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//    [fileManager removeItemAtPath:tsdbPath error:nil];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [(AppDelegate *)[UIApplication sharedApplication].delegate setGuidPageBeRootView];

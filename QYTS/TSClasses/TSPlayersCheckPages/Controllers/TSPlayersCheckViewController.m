@@ -530,6 +530,14 @@ typedef NS_ENUM(NSInteger, GameAuth) {
         duration = 3.0;
     }
     
+    //删除数据库文件，在这个位置删除以保证数据生命周期最大化
+    NSString *documentsPath = nil;
+    NSArray *appArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    documentsPath = [appArray objectAtIndex:0];
+    NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:tsdbPath error:nil];
+    
     [self p_initTSDB];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [paySuccessView dismiss];
