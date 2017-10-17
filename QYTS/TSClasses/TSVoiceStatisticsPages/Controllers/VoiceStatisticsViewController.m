@@ -486,63 +486,107 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     
     NSString *stageCount = [self.tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
-    DDLog(@"currentStage is:%@", stageCount);
+    
+    //判断是否有节次为提交
+    NSString *gameQuartArr = [self.tSDBManager getObjectById:GameId fromTable:GameTable][GameQuaretArr];
+    
+    NSMutableArray *gameArr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
+    
+    
+    while (gameArr.count) {
+        NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
+        
+        TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
+        [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
+            DDLog(@"up load data returnValue is:%@", returnValue);
+            //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
+            NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+            if (returnValue[@"entity"][@"matchInfoId"]) {
+                gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
+                [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+                // 更新比赛进行状态
+                
+                // 每节数据提交成功后，初始化所有球员的上场时间
+                [SVProgressHUD showInfoWithStatus:@"提交成功"];
+                
+            }
+            
+        } WithErrorBlock:^(id errorCode) {
+            [SVProgressHUD showInfoWithStatus:errorCode];
+        } WithFailureBlock:^{
+            //                [self p_setupGameStatusWithSuccess:NO andStateArr:gameArr];
+            [SVProgressHUD dismiss];
+            
+        }];
+    }
+
+    
     
     NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
     
     TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
     [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
         DDLog(@"up load data returnValue is:%@", returnValue);
-        
-        [self p_setupGameStatus]; // 更新比赛进行状态
+         //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
         NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         if (returnValue[@"entity"][@"matchInfoId"]) {
             gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
             [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
-        }
-        
-        [self.dataShowArray removeAllObjects];
-        [self.insertDBDictArray removeAllObjects];
-        [self.tableView reloadData];
-        //删除保存声音（所有）
-        [self.pcmArr removeAllObjects];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *path = [paths objectAtIndex:0];
-        NSFileManager *fileMgr = [NSFileManager defaultManager];
-        NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
-        NSLog(@"CachesPath is %@",path);
-        
-        for (NSString *fileName in fileList)
-        {
+            // 更新比赛进行状态
+            [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
             
-            if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
-                NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
-                BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
-                if (bRet) {
-                    NSError *err;
-                    [fileMgr removeItemAtPath:fileDir error:&err];
-                }
-            }
+            // 每节数据提交成功后，初始化所有球员的上场时间
+            [SVProgressHUD showInfoWithStatus:@"提交成功"];
+            
         }
-        [_tb reloadData];
         
-        // 每节数据提交成功后，初始化所有球员的上场时间
-        [SVProgressHUD showInfoWithStatus:@"提交成功"];
-        
-        
-        
-        if (0 == [gameTableDict[GameStatus] intValue]) {
-            [self p_updateCurrentStageIfSendDataSuccess];
-            [self.tSDBManager initPlayingTimesOnce];
-        } else {
-            [self p_pushFullManagerViewController];
-        }
-    } WithErrorBlock:^(id errorCode) {
+        } WithErrorBlock:^(id errorCode) {
         [SVProgressHUD showInfoWithStatus:errorCode];
     } WithFailureBlock:^{
+        [self p_setupGameStatusWithSuccess:NO andStateArr:gameArr];
         [SVProgressHUD dismiss];
+        
     }];
     [voiceViewModel sendCurrentStageData];
+}
+
+// 更新比赛进行状态
+-(void)p_updataCurrentStageDataWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)arr{
+    
+    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
+    NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    [self.dataShowArray removeAllObjects];
+    [self.insertDBDictArray removeAllObjects];
+    [self.tableView reloadData];
+    //删除保存声音（所有）
+    [self.pcmArr removeAllObjects];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths objectAtIndex:0];
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
+    for (NSString *fileName in fileList)
+    {
+        
+        if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
+            NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
+            BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
+            if (bRet) {
+                NSError *err;
+                [fileMgr removeItemAtPath:fileDir error:&err];
+            }
+        }
+    }
+    
+    [_tb reloadData];
+    
+    if (0 == [gameTableDict[GameStatus] intValue]) {
+        [self p_updateCurrentStageIfSendDataSuccess];
+        [self.tSDBManager initPlayingTimesOnce];
+    } else {
+        [self p_pushFullManagerViewController];
+    }
+
+    
 }
 
 - (BOOL)p_refuseIfDivideAndLastStage {
@@ -613,10 +657,31 @@
     DDLog(@"数据提交成功:%@", [self.tSDBManager getObjectById:GameId fromTable:GameTable]);
 }
 
-- (void)p_setupGameStatus { // 设置比赛状态（结束或未结束）
-    // 本节提交成功，标记为已提交
+- (void)p_setupGameStatusWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)arr { // 设置比赛状态（结束或未结束）
     NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
-    gameTableDict0[CurrentStageDataSubmitted] = @"1";
+    if (success) {
+        // 本节提交成功，标记为已提交
+        gameTableDict0[CurrentStageDataSubmitted] = @"1";
+        
+    }
+    else{
+        gameTableDict0[CurrentStageDataSubmitted] = @"0";
+        NSString *stageCount = [self.tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
+        if (arr == nil) {
+            arr = [NSMutableArray array];
+        }
+        [arr addObject:stageCount];
+        NSString *quartStr = [NSString string];
+        for (NSString *gameQuartStr in arr) {
+            quartStr = [NSString stringWithFormat:@"%@,%@",quartStr,gameQuartStr];
+            
+        }
+        NSString *gameStr = [quartStr substringFromIndex:1];
+        
+        [gameTableDict0 setObject:gameStr forKey:GameQuaretArr];
+    }
+    
+    
     [self.tSDBManager putObject:gameTableDict0 withId:GameId intoTable:GameTable];
     
     __block BOOL gameOver = NO;

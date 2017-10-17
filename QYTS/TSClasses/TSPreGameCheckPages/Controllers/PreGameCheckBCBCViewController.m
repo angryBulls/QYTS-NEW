@@ -459,6 +459,7 @@
     GameCheckViewModel *checkViewModel = [[GameCheckViewModel alloc] initWithPramasDict:paramsDict];
     [checkViewModel setBlockWithReturnBlock:^(id returnValue) {
         DDLog(@"getBCBCMatchId returnValue is:%@", returnValue);
+        
         if (returnValue[@"entity"][@"matchId"]) {
             self.checkModel.matchId = returnValue[@"entity"][@"matchId"];
             
@@ -478,6 +479,7 @@
     } WithFailureBlock:^{
         
     }];
+    
     [checkViewModel getBCBCMatchId];
 }
 

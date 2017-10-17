@@ -78,6 +78,7 @@ static NSString *kLinkDescription = @"#战在BCBC#灯光与球场，汗水与信
             } else if (currentUserType == LoginUserTypeCBO) {
                 paramsDict[@"type"] = @3;
             }
+            
             paramsDict[@"url"] = @"http://bcbc1.qiuyouzone.com/statis_share/videoshare.html";
             PersonalViewModel *personalViewModel = [[PersonalViewModel alloc] initWithPramasDict:paramsDict];
             [personalViewModel setBlockWithReturnBlock:^(id returnValue) {

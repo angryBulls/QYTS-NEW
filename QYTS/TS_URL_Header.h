@@ -34,6 +34,9 @@ static NSString * const GameCheckID = @"game_check_id"; // 赛前检录数据id
 static NSString * const TeamCheckID_H = @"team_check_id_h"; // 主队球员检录数据id
 static NSString * const TeamCheckID_G = @"team_check_id_g"; // 客队球员检录数据id
 
+static NSString * const GameIsFinished = @"isFinish";
+static NSString * const GameIsSubmitAll = @"isSubmit";
+
 // 用于查询比赛相关的所有数据（包括：全队犯规、暂停等）
 static NSString * const GameId = @"gameId";
 
@@ -42,6 +45,8 @@ static NSString * const PlayerId = @"playerId";
 static NSString * const GameStatus = @"gameStatus"; // 比赛是否结束
 static NSString * const CurrentStage = @"currentStage";
 static NSString * const CurrentStageDataSubmitted = @"currentStageDataSubmitted";
+static NSString * const GameQuaretArr = @"gameQuaretArr";
+
 
 static NSString * const BnfTeameType = @"<teamName>";
 static NSString * const BnfTenNumberType = @"<tenNumber>";

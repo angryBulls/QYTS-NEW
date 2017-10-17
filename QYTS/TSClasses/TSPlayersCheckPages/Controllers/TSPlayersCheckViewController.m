@@ -291,6 +291,9 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     NSMutableDictionary *gameCheckDict = self.checkModel.mj_keyValues;
     //    DDLog(@"gameCheckDict is:%@", gameCheckDict);
     
+    [gameCheckDict setObject:@"0" forKey:GameIsFinished];
+    [gameCheckDict setObject:@"0" forKey:GameIsSubmitAll];
+    
     NSMutableArray *playerArrayH = [TSPlayerModel mj_keyValuesArrayWithObjectArray:self.playerArrayH];
     //    DDLog(@"playerArrayH is:%@", playerArrayH);
     
@@ -306,10 +309,17 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
     YTKKeyValueStore *store = [[YTKKeyValueStore alloc] initWithDBWithPath:tsdbPath];
     [store createTableWithName:TSCheckTable]; // 创建检录数据表
+    
+    
+    
     // 往检录数据表中插入“赛前检录”数据
     [store putObject:gameCheckDict withId:GameCheckID intoTable:TSCheckTable];
+    
+    
     // 往检录数据表中插入“主队球员检录”数据
     [store putObject:playerArrayH withId:TeamCheckID_H intoTable:TSCheckTable];
+    
+    
     // 往检录数据表中插入“客队球员检录”数据
     [store putObject:playerArrayG withId:TeamCheckID_G intoTable:TSCheckTable];
     

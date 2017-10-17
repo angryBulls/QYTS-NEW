@@ -9,6 +9,8 @@
 #import "ViewModelClass.h"
 
 @interface TSVoiceViewModel : ViewModelClass
+@property (nonatomic, strong) NSString *passStageData;
+
 - (instancetype)initWithPramasDict:(NSMutableDictionary *)pramasDict;
 
 - (void)sendCurrentStageData;
