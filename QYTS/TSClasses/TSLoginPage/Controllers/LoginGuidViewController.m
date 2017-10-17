@@ -44,7 +44,11 @@
 }
 
 - (void)p_checkVoiceDB {
-    if ([TSToolsMethod checkVoiceDBExists]) {
+    TSDBManager *tSDBManager = [[TSDBManager alloc] init];
+    NSString *status = [tSDBManager getObjectById:GameStatus fromTable:GameTable];
+    NSString *quare = [tSDBManager getObjectById:GameQuaretArr fromTable:GameTable];
+//    if ([TSToolsMethod checkVoiceDBExists]) {
+    if ([status isEqualToString:@"1"] && quare.length > 0) {
         UIAlertView *dbAlertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"比赛还没有结束，是否继续比赛？" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
         dbAlertView.tag = 1;
         [dbAlertView show];
