@@ -42,6 +42,8 @@
 @property (nonatomic, strong) PcmPlayer *audioPlayer;
 @property (nonatomic,strong) AVAudioPlayer *player;
 
+//@property (nonatomic,assign)BOOL isNet;//判断是否提交成功（是否有网）
+
 @end
 
 @implementation VoiceStatisticsViewController
@@ -87,6 +89,7 @@
 #pragma mark - system method ************************************************************************************
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     
     [self addTopViewWithPageType:PageTypeVoice];
     
@@ -419,7 +422,7 @@
         if (_pcmArr.count) {
             [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         }
-
+        
         
     }
 }
@@ -481,80 +484,138 @@
         [SVProgressHUD showInfoWithStatus:@"胜负未分，无法提交"];
         return;
     }
-    
     [SVProgressHUD show];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     
-    NSString *stageCount = [self.tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
-    
-    //判断是否有节次为提交
+    //判断是否有节次未提交
+    NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     NSString *gameQuartArr = [self.tSDBManager getObjectById:GameId fromTable:GameTable][GameQuaretArr];
+    NSMutableArray *gameArrrr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
     
-    NSMutableArray *gameArr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
-    
-    
-    while (gameArr.count) {
-        NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
+    if (gameQuartArr.length  ) {
         
-        TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
-        [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
-            DDLog(@"up load data returnValue is:%@", returnValue);
-            //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
-            NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
-            if (returnValue[@"entity"][@"matchInfoId"]) {
-                gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
-                [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
-                // 更新比赛进行状态
-                
-                // 每节数据提交成功后，初始化所有球员的上场时间
-                [SVProgressHUD showInfoWithStatus:@"提交成功"];
-                
-            }
-            
-        } WithErrorBlock:^(id errorCode) {
-            [SVProgressHUD showInfoWithStatus:errorCode];
-        } WithFailureBlock:^{
-            //                [self p_setupGameStatusWithSuccess:NO andStateArr:gameArr];
-            [SVProgressHUD dismiss];
-            
-        }];
-    }
+        [self submitOldQuart];
 
-    
-    
+    }
+    else{
+
     NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
-    
     TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
     [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
         DDLog(@"up load data returnValue is:%@", returnValue);
-         //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
-        NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+        //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
+       
         if (returnValue[@"entity"][@"matchInfoId"]) {
             gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
             [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
             // 更新比赛进行状态
             [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
-            
             // 每节数据提交成功后，初始化所有球员的上场时间
             [SVProgressHUD showInfoWithStatus:@"提交成功"];
+            NSLog(@"%@",returnValue[@"entity"]);
             
         }
+        if (0 == [gameTableDict[GameStatus] intValue]) {
+            [self p_updateCurrentStageIfSendDataSuccess];
+            [self.tSDBManager initPlayingTimesOnce];
+        } else {
+            [self p_pushFullManagerViewController];
+        }
         
-        } WithErrorBlock:^(id errorCode) {
+    } WithErrorBlock:^(id errorCode) {
         [SVProgressHUD showInfoWithStatus:errorCode];
     } WithFailureBlock:^{
-        [self p_setupGameStatusWithSuccess:NO andStateArr:gameArr];
+        
+        
+        [self p_setupGameStatusWithSuccess:NO andStateArr:gameArrrr];
+        
+        
+        if (0 == [gameTableDict[GameStatus] intValue]) {
+            [self p_updateCurrentStageIfSendDataSuccess];
+            [self.tSDBManager initPlayingTimesOnce];
+        } else {
+            [self p_pushFullManagerViewController];
+        }
+        
+        // 更新比赛进行状态
+        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        
         [SVProgressHUD dismiss];
         
     }];
+    
+    [voiceViewModel sendCurrentStageData];
+    }
+}
+//提交未提交的节次
+-(void)submitOldQuart{
+    NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    NSString *gameArrStr = gameTableDict0[GameQuaretArr];
+    NSMutableArray *arr =[NSMutableArray arrayWithArray:[gameArrStr componentsSeparatedByString:@","]];
+    
+    TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
+    NSString *gameQuartArrStr = gameTableDict0[GameQuaretArr];
+    voiceViewModel.oldStage = [gameQuartArrStr componentsSeparatedByString:@","].firstObject;
+    
+    [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
+        DDLog(@"up load data returnValue is:%@", returnValue);
+        //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
+        NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+        if (returnValue[@"entity"][@"matchInfoId"]) {
+            gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
+        }
+        [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+        //判断是否有节次还未提交
+        NSString *gameQuartArr = gameTableDict0[GameQuaretArr];
+        NSMutableArray *gameArr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
+        [gameArr removeObjectAtIndex:0];
+        
+        NSString *str = [NSString string];
+        
+        for (NSString *s in gameArr) {
+            str = [NSString stringWithFormat:@"%@,%@",str,s];
+        }
+        NSString *gameStr = [NSString string];
+        if (gameArr.count) {
+            gameStr = [str substringFromIndex:1];
+        }
+        gameTableDict0[GameQuaretArr] = gameStr;
+        
+        [self.tSDBManager putObject:gameTableDict0 withId:GameId intoTable:GameTable];
+        
+        // 更新比赛进行状态
+        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        
+        [self p_sendCurrentStageData];
+        
+        
+    } WithErrorBlock:^(id errorCode) {
+        
+        [SVProgressHUD showInfoWithStatus:errorCode];
+    } WithFailureBlock:^{
+        
+        [self p_setupGameStatusWithSuccess:NO andStateArr:arr];
+        if (0 == [gameTableDict0[GameStatus] intValue]) {
+            [self p_updateCurrentStageIfSendDataSuccess];
+            [self.tSDBManager initPlayingTimesOnce];
+        } else {
+            [self p_pushFullManagerViewController];
+        }
+        // 更新比赛进行状态
+        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        
+        [SVProgressHUD dismiss];
+        
+    }];
+   
+    
     [voiceViewModel sendCurrentStageData];
 }
 
 // 更新比赛进行状态
 -(void)p_updataCurrentStageDataWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)arr{
     
-    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
-    NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     [self.dataShowArray removeAllObjects];
     [self.insertDBDictArray removeAllObjects];
     [self.tableView reloadData];
@@ -566,7 +627,6 @@
     NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
     for (NSString *fileName in fileList)
     {
-        
         if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
             NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
             BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
@@ -579,13 +639,8 @@
     
     [_tb reloadData];
     
-    if (0 == [gameTableDict[GameStatus] intValue]) {
-        [self p_updateCurrentStageIfSendDataSuccess];
-        [self.tSDBManager initPlayingTimesOnce];
-    } else {
-        [self p_pushFullManagerViewController];
-    }
-
+    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
+    
     
 }
 
@@ -657,28 +712,33 @@
     DDLog(@"数据提交成功:%@", [self.tSDBManager getObjectById:GameId fromTable:GameTable]);
 }
 
-- (void)p_setupGameStatusWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)arr { // 设置比赛状态（结束或未结束）
+- (void)p_setupGameStatusWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)gameArr { // 设置比赛状态（结束或未结束）
     NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
-    if (success) {
+    
+    if (success == 1) {
         // 本节提交成功，标记为已提交
         gameTableDict0[CurrentStageDataSubmitted] = @"1";
-        
     }
     else{
         gameTableDict0[CurrentStageDataSubmitted] = @"0";
         NSString *stageCount = [self.tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
-        if (arr == nil) {
-            arr = [NSMutableArray array];
+        
+        if (gameArr == nil) {
+            gameArr = [NSMutableArray array];
         }
-        [arr addObject:stageCount];
+        [gameArr addObject:stageCount];
+        
+        
+        
         NSString *quartStr = [NSString string];
-        for (NSString *gameQuartStr in arr) {
+        for (NSString *gameQuartStr in gameArr) {
             quartStr = [NSString stringWithFormat:@"%@,%@",quartStr,gameQuartStr];
             
         }
         NSString *gameStr = [quartStr substringFromIndex:1];
         
         [gameTableDict0 setObject:gameStr forKey:GameQuaretArr];
+        
     }
     
     

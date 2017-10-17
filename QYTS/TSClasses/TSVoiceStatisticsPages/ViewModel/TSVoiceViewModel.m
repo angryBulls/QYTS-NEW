@@ -147,9 +147,33 @@
 - (void)p_createSendCurrentStageData { // 获取当节需要被提交的数据
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     
-    // 获取当前第几节
+    // 获取需要提交的节次
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
+    if (_oldStage.length) {
+        [StageAllArray enumerateObjectsUsingBlock:^(NSString *stageName, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([_oldStage isEqualToString:stageName]) {
+                if (0 == idx) {
+                    self.pramasDict[@"type"] = @"o";
+                } else if (1 == idx) {
+                    self.pramasDict[@"type"] = @"s";
+                } else if (2 == idx) {
+                    self.pramasDict[@"type"] = @"t";
+                } else if (3 == idx) {
+                    self.pramasDict[@"type"] = @"f";
+                } else if (4 == idx) {
+                    self.pramasDict[@"type"] = @"oto";
+                } else if (5 == idx) {
+                    self.pramasDict[@"type"] = @"ots";
+                } else if (6 == idx) {
+                    self.pramasDict[@"type"] = @"ott";
+                }
+            }
+        }];
+        
+    }
+    else{
     [StageAllArray enumerateObjectsUsingBlock:^(NSString *stageName, NSUInteger idx, BOOL * _Nonnull stop) {
+        
         if ([gameTableDict[CurrentStage] isEqualToString:stageName]) {
             if (0 == idx) {
                 self.pramasDict[@"type"] = @"o";
@@ -168,7 +192,7 @@
             }
         }
     }];
-    
+    }
     // 获取“比赛数据表”中的“matchId”
     if ([gameTableDict[@"matchInfoId"] length]) {
         self.pramasDict[@"matchId"] = gameTableDict[@"matchInfoId"];
