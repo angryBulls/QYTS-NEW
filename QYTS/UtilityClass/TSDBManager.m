@@ -97,6 +97,7 @@
     }
     
     NSMutableDictionary *insertDBDict = [NSMutableDictionary dictionaryWithDictionary:self.insertDBDict];
+    
     self.insertDBDict = nil;
     DDLog(@"识别数据被清空！！！！！！！！！1");
     
@@ -125,6 +126,7 @@
     
     [self insertObjectByInsertDBDict:insertDBDict playerId:playerId];
     saveDBStatusSuccessBlock(insertDBDict);
+    
 }
 
 #pragma mark - 新增一条数据
@@ -203,6 +205,7 @@
             }
         }
     }];
+    
     
     // 将统计好的数据，按节保存
     queryPlayerDict[stageCount] = newQueryPlayerDict;

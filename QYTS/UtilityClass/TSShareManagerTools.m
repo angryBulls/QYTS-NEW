@@ -9,7 +9,7 @@
 #import "TSShareManagerTools.h"
 #import "PersonalViewModel.h"
 
-static NSString *WebPageUrl = @"http://bcbc1.qiuyouzone.com/statis_share/videoshare.html?matchId=%@";
+static NSString *WebPageUrl = @"http://bcbc.qiuyouzone.com/statis_share/videoshare.html?matchId=%@";
 static NSString *ThumbURL = @"";
 static NSString *kLinkTitle = @"语音技统";
 static NSString *kLinkDescription = @"#战在BCBC#灯光与球场，汗水与信念，今天我是球场王者！";
@@ -79,7 +79,7 @@ static NSString *kLinkDescription = @"#战在BCBC#灯光与球场，汗水与信
                 paramsDict[@"type"] = @3;
             }
             
-            paramsDict[@"url"] = @"http://bcbc1.qiuyouzone.com/statis_share/videoshare.html";
+            paramsDict[@"url"] = @"http://bcbc.qiuyouzone.com/statis_share/videoshare.html";
             PersonalViewModel *personalViewModel = [[PersonalViewModel alloc] initWithPramasDict:paramsDict];
             [personalViewModel setBlockWithReturnBlock:^(id returnValue) {
                 DDLog(@"shareLogSave returnValue is:%@", returnValue);

@@ -65,6 +65,7 @@
         }
     }];
     [self.view addSubview:segView];
+    
     self.segView = segView;
 }
 

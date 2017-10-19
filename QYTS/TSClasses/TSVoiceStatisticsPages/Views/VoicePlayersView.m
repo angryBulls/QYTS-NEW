@@ -10,7 +10,9 @@
 #import "TSInstructionsView.h"
 #import "CustomUIButton.h"
 #import "ManualTSView.h"
+#import "TSVoiceViewModel.h"
 #import "LCActionSheet.h"
+
 
 @interface VoicePlayersView ()
 @property (nonatomic, weak) UILabel *hostPlayerLab;
@@ -23,10 +25,22 @@
 @property (nonatomic ,strong) UIButton *homeAbstainedBtn;
 @property (nonatomic ,strong) UIButton *awayAbstainedBtn;
 @property (nonatomic ,strong) LCActionSheet *actionSheet;
+@property (nonatomic ,strong) TSDBManager *tSDBManager;
+
+@property (nonatomic, copy) AbstentionSuccessBlock abstentionSuccessBlock;
+
 
 @end
 
 @implementation VoicePlayersView
+
+-(TSDBManager *)tSDBManager{
+    if (_tSDBManager == nil) {
+        _tSDBManager = [[TSDBManager alloc] init];
+    }
+    return _tSDBManager;
+}
+
 - (NSMutableArray *)hostNumbArray {
     if (!_hostNumbArray) {
         _hostNumbArray = [NSMutableArray array];
@@ -39,6 +53,15 @@
         _guestNumbArray = [NSMutableArray array];
     }
     return _guestNumbArray;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame abstentionSuccessBlock:(AbstentionSuccessBlock)abstentionSuccessBlock {
+    if (self = [super initWithFrame:frame]) {
+        _abstentionSuccessBlock = abstentionSuccessBlock;
+        [self p_setupSubViews];
+    }
+    
+    return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -327,4 +350,140 @@
     manualTSView.playerInfoDict = playerInfoDict;
     [manualTSView show];
 }
+#pragma mark  actionSheetDelegate
+- (void)actionSheet:(LCActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    if (self.actionSheet) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self.actionSheet name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+        self.actionSheet = nil;
+    }
+    
+    if (1 == buttonIndex) {
+        
+        //判断是否有节次未提交
+        NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+        
+        NSMutableDictionary *paramsDict1 = [NSMutableDictionary dictionary];
+        TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict1];
+        
+        [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
+            DDLog(@"up load data returnValue is:%@", returnValue);
+            //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
+
+                [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+                
+                TSDBManager *tSDBManager = [[TSDBManager alloc] init];
+                NSMutableDictionary *gameTableDict = [[tSDBManager getObjectById:GameCheckID fromTable:TSCheckTable] mutableCopy];
+                //        DDLog(@"gameTableDict is:%@", gameTableDict);
+                NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
+                paramsDict[@"matchId"] = gameTableDict[@"matchId"];
+                
+                
+                if (0 == actionSheet.tag) { // 主队弃权
+                    paramsDict[@"teamType"] = @1;
+                } else { // 客队弃权
+                    paramsDict[@"teamType"] = @2;
+                }
+                
+                TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
+                [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
+                    DDLog(@"abstention returnValue is:%@", returnValue);
+                    if (0 == actionSheet.tag) { // 主队弃权成功
+                        gameTableDict[@"abstention"] = @"1";
+                    } else { // 客队弃权成功
+                        gameTableDict[@"abstention"] = @"2";
+                    }
+                    gameTableDict[GameStatus] = @"1";
+                    [tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+                    
+                    self.homeAbstainedBtn.enabled = NO;
+                    self.homeAbstainedBtn.backgroundColor = [UIColor grayColor];
+                    self.awayAbstainedBtn.enabled = NO;
+                    self.awayAbstainedBtn.backgroundColor = [UIColor grayColor];
+                    DDLog(@"abstentioned gameTableDict is:%@", [tSDBManager getObjectById:GameId fromTable:GameTable]);
+                    if (0 == actionSheet.tag) {
+                        [SVProgressHUD showInfoWithStatus:@"主队弃权成功"];
+                    } else {
+                        [SVProgressHUD showInfoWithStatus:@"客队弃权成功"];
+                    }
+                    
+                    self.abstentionSuccessBlock ? self.abstentionSuccessBlock() : nil;
+                } WithErrorBlock:^(id errorCode) {
+                    [SVProgressHUD showInfoWithStatus:errorCode];
+                } WithFailureBlock:^{
+                    [SVProgressHUD dismiss];
+                }];
+                
+                if (LoginUserTypeNormal == CurrentUserType) {
+                    [voiceViewModel abstentionNormal];
+                } else if (LoginUserTypeBCBC == CurrentUserType) {
+                    [voiceViewModel abstentionBCBC];
+                } else if (LoginUserTypeCBO == CurrentUserType) {
+                    [voiceViewModel abstentionCBO];
+                }
+            
+            
+        } WithErrorBlock:^(id errorCode) {
+            [SVProgressHUD showInfoWithStatus:errorCode];
+        } WithFailureBlock:^{
+            
+            TSDBManager *tSDBManager = [[TSDBManager alloc] init];
+            NSMutableDictionary *gameTableDict = [[tSDBManager getObjectById:GameCheckID fromTable:TSCheckTable] mutableCopy];
+            //        DDLog(@"gameTableDict is:%@", gameTableDict);
+            NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
+            paramsDict[@"matchId"] = gameTableDict[@"matchId"];
+            
+            
+            if (0 == actionSheet.tag) { // 主队弃权
+                paramsDict[@"teamType"] = @1;
+            } else { // 客队弃权
+                paramsDict[@"teamType"] = @2;
+            }
+            
+            TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
+            [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
+                DDLog(@"abstention returnValue is:%@", returnValue);
+                if (0 == actionSheet.tag) { // 主队弃权成功
+                    gameTableDict[@"abstention"] = @"1";
+                } else { // 客队弃权成功
+                    gameTableDict[@"abstention"] = @"2";
+                }
+                gameTableDict[GameStatus] = @"1";
+                [tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+                self.homeAbstainedBtn.enabled = NO;
+                self.homeAbstainedBtn.backgroundColor = [UIColor grayColor];
+                self.awayAbstainedBtn.enabled = NO;
+                self.awayAbstainedBtn.backgroundColor = [UIColor grayColor];
+                DDLog(@"abstentioned gameTableDict is:%@", [tSDBManager getObjectById:GameId fromTable:GameTable]);
+                if (0 == actionSheet.tag) {
+                    [SVProgressHUD showInfoWithStatus:@"主队弃权成功"];
+                } else {
+                    [SVProgressHUD showInfoWithStatus:@"客队弃权成功"];
+                }
+                
+                self.abstentionSuccessBlock ? self.abstentionSuccessBlock() : nil;
+            } WithErrorBlock:^(id errorCode) {
+                [SVProgressHUD showInfoWithStatus:errorCode];
+            } WithFailureBlock:^{
+                [SVProgressHUD dismiss];
+            }];
+            
+            if (LoginUserTypeNormal == CurrentUserType) {
+                [voiceViewModel abstentionNormal];
+            } else if (LoginUserTypeBCBC == CurrentUserType) {
+                [voiceViewModel abstentionBCBC];
+            } else if (LoginUserTypeCBO == CurrentUserType) {
+                [voiceViewModel abstentionCBO];
+            }
+
+            [SVProgressHUD dismiss];
+            
+        }];
+        [voiceViewModel sendCurrentStageData];
+
+    }
+}
+
+
+
 @end

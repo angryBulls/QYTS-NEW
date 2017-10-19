@@ -81,7 +81,7 @@
         if ([returnValue[@"entity"][@"guides"] count]) {
             adInfoDict = [returnValue[@"entity"][@"guides"] lastObject];
             if (adInfoDict[@"imageUrl"]) {
-                [self.adBgimageView sd_setImageWithURL:[NSURL URLWithString:adInfoDict[@"imageUrl"]]];
+//                [self.adBgimageView sd_setImageWithURL:[NSURL URLWithString:adInfoDict[@"imageUrl"]]];
             }
         } else {
             [self p_stopGCDTimer];

@@ -52,6 +52,7 @@
         if ([responseObject[@"success"] isEqual:@1]) { // 用户无需购买
             self.returnBlock(responseObject);
         } else if ([responseObject[@"success"] isEqual:@0] && [responseObject[@"reason"] isEqualToString:@"buy"]) {
+            
             self.returnBlock(responseObject);
         } else {
             NSString *reason = @"请求失败";
@@ -175,6 +176,8 @@
                 [[AlipaySDK defaultService] payOrder:orderString fromScheme:appScheme callback:^(NSDictionary *resultDic) {
                     DDLog(@"reslut = %@",resultDic);
                     if ([resultDic[@"resultStatus"] isEqualToString:@"9000"]) { //支付成功
+                        
+                        
                         [self p_PostNotificationWithStatus:@"1"];
                     } else { // 支付失败
                         [self p_PostNotificationWithStatus:@"0"];

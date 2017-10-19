@@ -23,7 +23,7 @@
 #define GRAMMAR_TYPE_BNF @"bnf"
 
 @interface TSSpeechRecognizer ()
-@property (nonatomic, strong) TSDBManager *dbManager;
+//@property (nonatomic, strong) TSDBManager *dbManager;
 
 // ifly properties
 //语法识别对象
@@ -37,12 +37,13 @@
 @end
 
 @implementation TSSpeechRecognizer
-- (TSDBManager *)dbManager {
-    if (!_dbManager) {
-        _dbManager = [[TSDBManager alloc] init];
-    }
-    return _dbManager;
-}
+//- (TSDBManager *)dbManager {
+//    
+//    if (!_dbManager) {
+//        _dbManager = [[TSDBManager alloc] init];
+//    }
+//    return _dbManager;
+//}
 
 + (instancetype)defaultInstance {
     static dispatch_once_t onceToken;
@@ -157,10 +158,10 @@
     
     // 保存当前识别结果
     NSDictionary *resultDict = [TSToolsMethod dictionaryWithJsonString:[dic allKeys][0]];
-    
-    [self.dbManager saveOneResultDataWithDict:resultDict saveDBStatusSuccessBlock:^(NSDictionary *insertDBDict) {
+   TSDBManager * dbManager = [[TSDBManager alloc] init];
+    [dbManager saveOneResultDataWithDict:resultDict saveDBStatusSuccessBlock:^(NSDictionary *insertDBDict) {
         if ([self.delegate respondsToSelector:@selector(onResultsString:insertDBDict:recognizerResult:)]) {
-            NSString *returnString = [self.dbManager appendResultStringWithDict:insertDBDict];
+            NSString *returnString = [dbManager appendResultStringWithDict:insertDBDict];
             DDLog(@"returnString is:%@", returnString);
             
             [self.delegate onResultsString:returnString insertDBDict:insertDBDict recognizerResult:YES];
@@ -171,7 +172,7 @@
         [self.delegate onResultsString:self.curResult insertDBDict:@{} recognizerResult:NO];
     }];
     
-    DDLog(@"dbManager info is:%@", self.dbManager);
+    DDLog(@"dbManager info is:%@", dbManager);
 }
 
 /**
@@ -216,8 +217,8 @@
         
         //bnf resource
         NSString *bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/5V5Basketball.bnf",appPath];
-        
-        NSDictionary *gameTableDict = [self.dbManager getObjectById:GameId fromTable:GameTable];
+        TSDBManager *dbManager = [[TSDBManager alloc] init];
+        NSDictionary *gameTableDict = [dbManager getObjectById:GameId fromTable:GameTable];
         if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3 加载的bnf
             bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/3V3Basketball.bnf",appPath];
         }

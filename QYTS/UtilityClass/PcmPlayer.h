@@ -19,6 +19,14 @@
  ****/
 -(id)initWithFilePath:(NSString *)path sampleRate:(long)sample;
 
+/**
+ *
+ * path   音频pcm文件完整路径
+ * sample 音频pcm文件采样率，支持8000和16000两种
+ ****/
+
+-(void)filePath:(NSString *)path sampleRate:(long)sample;
+
 
 /**
  * 初始化播放器，并传入音频数据

@@ -52,7 +52,9 @@
 
 - (void)switchWindowView {
     if (ReachableViaWiFi == [TSNetworkManger checkCurrentNetWorkType]) {
-        [self setAdvertisementBeRootView];
+        //广告webView
+//        [self setAdvertisementBeRootView];
+        [self setGuidPageBeRootView];
     } else {
         [self setGuidPageBeRootView];
     }
@@ -109,6 +111,7 @@
 //    NSString *docDir = [paths objectAtIndex:0];
 //    NSString *createPath = [NSString stringWithFormat:@"%@/pcm",docDir];
 //    [recorder setSaveAudioPath:createPath];
+    
 }
 
 - (void)setAdvertisementBeRootView {

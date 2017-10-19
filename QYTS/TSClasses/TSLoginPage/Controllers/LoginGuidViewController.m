@@ -45,10 +45,13 @@
 
 - (void)p_checkVoiceDB {
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
-    NSString *status = [tSDBManager getObjectById:GameStatus fromTable:GameTable];
-    NSString *quare = [tSDBManager getObjectById:GameQuaretArr fromTable:GameTable];
+//    NSString *status = [tSDBManager getObjectById:GameStatus fromTable:GameTable];
+    NSDictionary *gameTableDic = [tSDBManager getObjectById:GameId fromTable:GameTable];
+    NSString *status = gameTableDic[GameStatus];
+    NSString *quare =  gameTableDic[GameQuaretArr];
+//    NSString *quare = [tSDBManager getObjectById:GameQuaretArr fromTable:GameTable];
 //    if ([TSToolsMethod checkVoiceDBExists]) {
-    if ([status isEqualToString:@"1"] && quare.length > 0) {
+    if ([status isEqualToString:@"0"] || quare.length > 0) {
         UIAlertView *dbAlertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"比赛还没有结束，是否继续比赛？" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
         dbAlertView.tag = 1;
         [dbAlertView show];

@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+typedef void (^AbstentionSuccessBlock)();
 
 @interface VoicePlayersView : UIView
+- (instancetype)initWithFrame:(CGRect)frame abstentionSuccessBlock:(AbstentionSuccessBlock)abstentionSuccessBlock;
+
 - (void)updatePlayersStatus;
 @end

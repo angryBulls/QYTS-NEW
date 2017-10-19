@@ -81,7 +81,7 @@
 }
 
 - (void)p_createrightTextfieldViews {
-    NSArray *placeholderArray = @[@"请输入姓名", @"请输入手机号", @"请输入验证码", @"中文/英文/数字组合 最低六位数", @"请输入再次输入密码", @"请输入邀请码"];
+    NSArray *placeholderArray = @[@"请输入姓名", @"请输入手机号", @"请输入验证码", @"中文/英文/数字组合 最低六位数", @"请输入再次输入密码", @"请输入邀请码(非必填)"];
     
     CGFloat rightViewX = W(88);
     CGFloat rightViewY = 10;

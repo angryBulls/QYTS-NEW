@@ -185,7 +185,11 @@
     }
     
     TSShareViewController *shareVC = [[TSShareViewController alloc] init];
-    shareVC.matchInfoId = gameTableDict[@"matchInfoId"];
+    
+    shareVC.matchInfoId = [gameTableDict[@"matchId"] length]? gameTableDict[@"matchId"]:gameTableDict[@"matchInfoId"];
+    
+    
+    
     [self.navigationController pushViewController:shareVC animated:YES];
 }
 
@@ -296,7 +300,10 @@
 //    NSString *tsdbPath = [documentsPath stringByAppendingString:[NSString stringWithFormat:@"/%@", TSDBName]];
 //    NSFileManager *fileManager = [NSFileManager defaultManager];
 //    [fileManager removeItemAtPath:tsdbPath error:nil];
+    NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    gameTableDict[GameStatus] = @"1";
     
+    [_tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [(AppDelegate *)[UIApplication sharedApplication].delegate setGuidPageBeRootView];
     });

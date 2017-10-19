@@ -47,6 +47,8 @@
 @end
 
 @implementation VoiceStatisticsViewController
+
+
 - (PcmPlayer *)audioPlayer {
     if (!_audioPlayer) {
         _audioPlayer = [[PcmPlayer alloc] init];
@@ -90,10 +92,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self p_updataMatchStatus];
     
     [self addTopViewWithPageType:PageTypeVoice];
     
-    [self p_getPcmDateSouce];
+//    [self p_getPcmDateSouce];
+    [self p_deleteRecodeFiles];
     
     [self p_createCenterView];
     
@@ -114,9 +118,18 @@
     [self p_checkGameStatus];
 }
 
+-(void)p_updataMatchStatus{
+    
+    NSMutableDictionary *gameTableDic = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    gameTableDic[GameStatus] = @"0";
+    [self.tSDBManager putObject:gameTableDic withId:GameId intoTable:GameTable];
+}
+
 - (void)p_checkGameStatus {
     NSDictionary *gameTableDict = [self.tSDBManager getObjectById:GameId fromTable:GameTable];
     if (1 == [gameTableDict[GameStatus] intValue]) { // 比赛结束
+        
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             TSManagerViewController *managerVC = [[TSManagerViewController alloc] init];
             managerVC.selectPageType = SelectPageTypeFull;
@@ -153,8 +166,6 @@
         }
     }
     
-    
-    
 }
 
 - (void)p_createCenterView {
@@ -163,7 +174,13 @@
     CGFloat playersViewY = CGRectGetMaxY(self.topView.frame);
     CGFloat playersViewH = H(66);
     CGFloat playersViewW = self.view.width - 2*playersViewX;
-    VoicePlayersView *voicePlayersView = [[VoicePlayersView alloc] initWithFrame:CGRectMake(playersViewX, playersViewY, playersViewW, playersViewH)];
+    
+    VoicePlayersView *voicePlayersView = [[VoicePlayersView alloc] initWithFrame:CGRectMake(playersViewX, playersViewY, playersViewW, playersViewH) abstentionSuccessBlock:^{
+        //弃权成功回调
+        [self p_updateStatisticsData];
+        [self p_checkGameStatus];
+ 
+    }];
     [self.view addSubview:voicePlayersView];
     self.voicePlayersView = voicePlayersView;
     
@@ -177,8 +194,6 @@
     
     self.tableView.frame = CGRectMake(0, H(37), self.centerView.width*3/5, self.centerView.height - H(37));
     TSAbstainedView *abstainedView = [[TSAbstainedView alloc] initWithFrame:CGRectMake(0, 0, self.centerView.width, H(37)) abstentionSuccessBlock:^{ // 弃权成功
-        [self p_updateStatisticsData];
-        [self p_checkGameStatus];
     }];
     [self.centerView addSubview:abstainedView];
     self.tableView.tag = 999;
@@ -201,10 +216,7 @@
     [centerView addSubview:_tb];
     _tb.backgroundColor = centerView.backgroundColor;
     
-    
     [self scrollTableToFoot:YES];
-    
-    
     CGFloat volumeViewH = H(50);
     CGFloat volumeViewW = W(100);
     TSVolumeView *volumeView = [[TSVolumeView alloc] initWithFrame:CGRectMake(0, centerView.height - volumeViewH - H(11.5), volumeViewW, volumeViewH)];
@@ -384,13 +396,17 @@
         TTSConfig *instance = [TTSConfig sharedInstance];
         NSError *error = nil;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+        
         self.audioPlayer = [[PcmPlayer alloc] initWithFilePath:path sampleRate:[instance.sampleRate integerValue]];
+        
         [_audioPlayer play];
+        
         
         NSString *newPath = [path stringByReplacingOccurrencesOfString:@"000" withString:@"001"];
         if ([path containsString:@"000"]) {
             [[NSFileManager defaultManager] moveItemAtPath:path toPath:newPath error:nil];
         }
+        
         
         [self p_getPcmDateSouce];
         [_tb reloadData];
@@ -405,14 +421,12 @@
         
         if (self.dataShowArray.count > 0) {
             [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.dataShowArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
-            
             [self scrollTableToFoot:YES];
         }
-        
-        
         [self.insertDBDictArray addObject:insertDBDict];
         
         [self p_updateStatisticsData];
+        
     }
     else{
         [self p_getPcmDateSouce];
@@ -508,19 +522,25 @@
         if (returnValue[@"entity"][@"matchInfoId"]) {
             gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
             [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
+
+            [self p_setupGameStatusWithSuccess:YES andStateArr:nil];
+            
+            
+            if (0 == [gameTableDict[GameStatus] intValue]) {
+                [self p_updateCurrentStageIfSendDataSuccess];
+                [self.tSDBManager initPlayingTimesOnce];
+            } else {
+                [self p_pushFullManagerViewController];
+            }
+            
             // 更新比赛进行状态
             [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
             // 每节数据提交成功后，初始化所有球员的上场时间
             [SVProgressHUD showInfoWithStatus:@"提交成功"];
-            NSLog(@"%@",returnValue[@"entity"]);
+            
             
         }
-        if (0 == [gameTableDict[GameStatus] intValue]) {
-            [self p_updateCurrentStageIfSendDataSuccess];
-            [self.tSDBManager initPlayingTimesOnce];
-        } else {
-            [self p_pushFullManagerViewController];
-        }
+        
         
     } WithErrorBlock:^(id errorCode) {
         [SVProgressHUD showInfoWithStatus:errorCode];
@@ -621,6 +641,16 @@
     [self.tableView reloadData];
     //删除保存声音（所有）
     [self.pcmArr removeAllObjects];
+    [self p_deleteRecodeFiles];
+    
+    [_tb reloadData];
+    
+    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
+    
+    
+}
+
+-(void)p_deleteRecodeFiles{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *path = [paths objectAtIndex:0];
     NSFileManager *fileMgr = [NSFileManager defaultManager];
@@ -636,12 +666,6 @@
             }
         }
     }
-    
-    [_tb reloadData];
-    
-    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
-    
-    
 }
 
 - (BOOL)p_refuseIfDivideAndLastStage {
@@ -727,9 +751,7 @@
             gameArr = [NSMutableArray array];
         }
         [gameArr addObject:stageCount];
-        
-        
-        
+
         NSString *quartStr = [NSString string];
         for (NSString *gameQuartStr in gameArr) {
             quartStr = [NSString stringWithFormat:@"%@,%@",quartStr,gameQuartStr];

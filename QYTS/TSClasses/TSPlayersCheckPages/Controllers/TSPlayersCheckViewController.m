@@ -295,10 +295,8 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     [gameCheckDict setObject:@"0" forKey:GameIsSubmitAll];
     
     NSMutableArray *playerArrayH = [TSPlayerModel mj_keyValuesArrayWithObjectArray:self.playerArrayH];
-    //    DDLog(@"playerArrayH is:%@", playerArrayH);
     
     NSMutableArray *playerArrayG = [TSPlayerModel mj_keyValuesArrayWithObjectArray:self.playerArrayG];
-    //    DDLog(@"playerArrayG is:%@", playerArrayG);
     
     // 创建数据库和数据库表
     NSString *documentsPath = nil;
@@ -310,24 +308,20 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     YTKKeyValueStore *store = [[YTKKeyValueStore alloc] initWithDBWithPath:tsdbPath];
     [store createTableWithName:TSCheckTable]; // 创建检录数据表
     
-    
-    
     // 往检录数据表中插入“赛前检录”数据
     [store putObject:gameCheckDict withId:GameCheckID intoTable:TSCheckTable];
-    
     
     // 往检录数据表中插入“主队球员检录”数据
     [store putObject:playerArrayH withId:TeamCheckID_H intoTable:TSCheckTable];
     
-    
     // 往检录数据表中插入“客队球员检录”数据
     [store putObject:playerArrayG withId:TeamCheckID_G intoTable:TSCheckTable];
     
-//    DDLog(@"TSCheckTable data is:%@", [store getObjectById:TeamCheckID_H fromTable:TSCheckTable]);
     
     [store createTableWithName:GameTable];
     // 往“比赛数据表”中写入第一节标记
     NSMutableDictionary *gameTableDict = [NSMutableDictionary dictionary];
+    gameTableDict[GameStatus] = @"1";
     gameTableDict[CurrentStage] = StageOne;
     gameTableDict[CurrentStageDataSubmitted] = @"0";
     gameTableDict[@"matchInfoId"] = self.checkModel.matchId;
@@ -517,7 +511,8 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     if ([payResult isEqualToString:@"0"]) { // 支付失败
         self.view.userInteractionEnabled = YES;
     } else { // 支付成功
-        [self p_checkUserAccountWithGameAuth:GameAuthPaySuccess];
+        
+        [self p_gotoStatisticsPageWithGameAuth:GameAuthPaySuccess];
     }
 }
 
@@ -539,6 +534,8 @@ typedef NS_ENUM(NSInteger, GameAuth) {
     [fileManager removeItemAtPath:tsdbPath error:nil];
     
     [self p_initTSDB];
+    
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [paySuccessView dismiss];
         [(AppDelegate *)[UIApplication sharedApplication].delegate setVoicePageBeRootView];

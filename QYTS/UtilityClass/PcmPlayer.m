@@ -43,6 +43,10 @@ typedef struct Wavehead
 @implementation PcmPlayer
 
 
+-(void)filePath:(NSString *)path sampleRate:(long)sample{
+    NSData *audioData = [NSData dataWithContentsOfFile:path];
+    [self writeWaveHead:audioData sampleRate:sample];
+}
 
 
 -(id)initWithFilePath:(NSString *)path sampleRate:(long)sample
@@ -52,7 +56,7 @@ typedef struct Wavehead
     if (self) {
         NSData *audioData = [NSData dataWithContentsOfFile:path];
         [self writeWaveHead:audioData sampleRate:sample];
-        NSLog(@"nihao");
+        
     }
     return self;
 }
@@ -167,6 +171,7 @@ typedef struct Wavehead
     {
        
         NSLog(@"pcmPlayer isPlaying");
+        
         return;
     }
     self.isPlaying = YES;
@@ -175,7 +180,7 @@ typedef struct Wavehead
     if ([self.pcmData length] > 44)
     {
         self.player.meteringEnabled = YES;
-        NSLog(@"音频持续时间是%f",self.player.duration);
+//        NSLog(@"音频持续时间是%f",self.player.duration);
         
         BOOL ret = [self.player play];
         NSLog(@"play ret=%d",ret);
@@ -183,7 +188,7 @@ typedef struct Wavehead
     else
     {
         self.isPlaying = NO;
-        NSLog(@"音频数据为空");
+//        NSLog(@"音频数据为空");
     }
     
 }

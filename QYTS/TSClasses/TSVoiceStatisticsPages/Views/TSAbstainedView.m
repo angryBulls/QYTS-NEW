@@ -41,10 +41,7 @@
 //    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:awayAbstainedBtn];
     self.awayAbstainedBtn = awayAbstainedBtn;
-    
-    
-    
-    
+
     
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
@@ -102,6 +99,7 @@
 
 
 - (void)actionSheet:(LCActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
     if (self.actionSheet) {
         [[NSNotificationCenter defaultCenter] removeObserver:self.actionSheet name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
         self.actionSheet = nil;
@@ -114,6 +112,7 @@
         
         NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
         paramsDict[@"matchId"] = gameTableDict[@"matchInfoId"];
+        
         if (0 == actionSheet.tag) { // 主队弃权
             paramsDict[@"teamType"] = @1;
         } else { // 客队弃权

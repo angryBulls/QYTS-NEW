@@ -94,5 +94,5 @@ static NSString * const OverTime3 = @"OverTime3";
 // 测试数据
 
 // 测试服务器地址
-#define TS_SERVER_URL_TEST @"http://180.76.166.143:8094/statistics/request"
+#define TS_SERVER_URL_TEST @"http://bcbc.qiuyouzone.com/statistics/request"
 #endif /* TS_URL_Header_h */
