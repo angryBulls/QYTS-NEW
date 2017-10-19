@@ -162,20 +162,39 @@
             if (3 == idx1) {
                 if (0 == idx2) {
                     subLabel.text = @"第四节";
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = @"加时赛";
+                    }
                 } else if (1 == idx2) {
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"fourth"]];
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"secondOt"]];
+                    }
                 } else if (2 == idx2) {
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.awayScores[@"fourth"]];
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"secondOt"]];
+                    }
                 }
             }
             
             if (4 == idx1) {
                 if (0 == idx2) {
                     subLabel.text = @"加时赛1";
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = @"加时赛";
+                    }
                 } else if (1 == idx2) {
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"firstOt"]];
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"thirdOt"]];
+                    }
                 } else if (2 == idx2) {
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.awayScores[@"firstOt"]];
+                    if (4 == matchInfoModel.sectionType.intValue) { // 2节8分钟
+                        subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.homeScores[@"thirdOt"]];
+                    }
+                    
                 }
             }
             

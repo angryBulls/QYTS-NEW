@@ -57,13 +57,11 @@
     paramsDict[@"matchId"] = self.matchInfoId;
     PersonalViewModel *personalViewModel = [[PersonalViewModel alloc] initWithPramasDict:paramsDict];
     [personalViewModel setBlockWithReturnBlock:^(id returnValue) {
-//        DDLog(@"shareMatchInfo returnValue is:%@", returnValue);
         ShareMatchInfoModel *infoModel = returnValue;
         self.headerView.highScorePlayer = infoModel.highScorePlayer;
         if (infoModel.playerPhoto.length) {
             self.headerView.playerPhoto = infoModel.playerPhoto;
         }
-        
         self.gameInfoView.matchInfoModel = infoModel;
         
         self.shareScoreView.matchInfoModel = infoModel;
@@ -76,6 +74,7 @@
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
             paragraphStyle.lineSpacing = H(3);
             NSMutableAttributedString *attribString = [[NSMutableAttributedString alloc] initWithString:infoModel.sign];
+            
             [attribString addAttribute:NSFontAttributeName value:self.signLab.font range:NSMakeRange(0, attribString.length)];
             [attribString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, attribString.length)];
             CGSize labelSize = [infoModel.sign sizeWithFont:self.signLab.font andLineSpacing:paragraphStyle.lineSpacing maxSize:CGSizeMake(self.signLab.width, MAXFLOAT)];

@@ -177,6 +177,7 @@
     
     VoicePlayersView *voicePlayersView = [[VoicePlayersView alloc] initWithFrame:CGRectMake(playersViewX, playersViewY, playersViewW, playersViewH) abstentionSuccessBlock:^{
         //弃权成功回调
+        
         [self p_updateStatisticsData];
         [self p_checkGameStatus];
  

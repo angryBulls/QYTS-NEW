@@ -14,7 +14,7 @@
 #import "LCActionSheet.h"
 
 
-@interface VoicePlayersView ()
+@interface VoicePlayersView ()<LCActionSheetDelegate>
 @property (nonatomic, weak) UILabel *hostPlayerLab;
 @property (nonatomic, weak) UILabel *guestPlayerLab;
 @property (nonatomic, weak) UIButton *instructionsLab;
@@ -369,7 +369,6 @@
         [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
             DDLog(@"up load data returnValue is:%@", returnValue);
             //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
-
                 [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
                 
                 TSDBManager *tSDBManager = [[TSDBManager alloc] init];
