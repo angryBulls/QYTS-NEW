@@ -36,8 +36,8 @@
 - (TSTextFieldView *)nameTextFieldView {
     if (!_nameTextFieldView) {
         CGRect textFieldViewFrame = CGRectMake(W(45), H(169), self.view.width - 2*W(45), H(41));
-        TSTextFieldType TSTextFieldType = TSTextFieldTypeName;
-        NSString *placeholderStr = @"用户名（英文或数字六位）";
+        TSTextFieldType TSTextFieldType = TSTextFieldTypeName2;
+        NSString *placeholderStr = @"请输入用户名";
         if (self.loginType == LoginUserTypeNormal) {
             TSTextFieldType = TSTextFieldTypePhone;
             placeholderStr = @"请输入手机号";
@@ -51,7 +51,7 @@
 - (TSTextFieldView *)passWordTextFieldView {
     if (!_passWordTextFieldView) {
         CGRect textFieldViewFrame = CGRectMake(W(45), H(234), self.view.width - 2*W(45), H(41));
-        _passWordTextFieldView = [[TSTextFieldView alloc] initWithFrame:textFieldViewFrame imageName:@"login_password_Iocn" placeholder:@"密码（英文或数字六位）" textfieldType:TSTextFieldTypePassword];
+        _passWordTextFieldView = [[TSTextFieldView alloc] initWithFrame:textFieldViewFrame imageName:@"login_password_Iocn" placeholder:@"请输入密码" textfieldType:TSTextFieldTypePassword];
     }
     
     return _passWordTextFieldView;
@@ -308,19 +308,19 @@
                 return;
             }
         } else if ([self.switchBtn.currentTitle isEqualToString:SwitchTitleAuth]) { // 普通用户使用密码登录
-            if (self.passWordTextFieldView.textField.text.length < 4) {
-                [SVProgressHUD showInfoWithStatus:@"请输入4-6位密码"];
+            if (self.passWordTextFieldView.textField.text.length < 6 || self.passWordTextFieldView.textField.text.length > 18) {
+                [SVProgressHUD showInfoWithStatus:@"请输入不少于六位的密码"];
                 return;
             }
         }
     } else if (self.loginType == LoginUserTypeBCBC) {
-        if (0 == self.nameTextFieldView.textField.text.length) {
+        if (self.nameTextFieldView.textField.text.length <2 || self.nameTextFieldView.textField.text.length >11) {
             [SVProgressHUD showInfoWithStatus:@"请输入正确的用户名"];
             return;
         }
         
-        if (self.passWordTextFieldView.textField.text.length < 4) {
-            [SVProgressHUD showInfoWithStatus:@"请输入4-6位密码"];
+        if (self.passWordTextFieldView.textField.text.length < 6 || self.passWordTextFieldView.textField.text.length > 18) {
+            [SVProgressHUD showInfoWithStatus:@"请输入不少于六位的密码"];
             return;
         }
     }

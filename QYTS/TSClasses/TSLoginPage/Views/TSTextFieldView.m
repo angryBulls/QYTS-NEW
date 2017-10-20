@@ -10,9 +10,10 @@
 #import "NSString+Valid.h"
 
 #define Symbol @"[ <>《》！*(^)$%~!@#$…&%￥¥—+=、。“”，-/;；''‘’:：·`.?？\"\"]+"
-#define NameLength 15
+#define NameLength 14
+#define NameLength2 11
 #define PhoneLength 11
-#define PassWordLength 6
+#define PassWordLength 18
 #define AuthCodeLength 4
 #define InviteCodeLength 4
 
@@ -96,9 +97,11 @@
         if (!position) {
             if (self.textfieldType == TSTextFieldTypeName && toBeString.length > NameLength) {
                 textField.text = [toBeString substringToIndex:NameLength];
-            } else if (self.textfieldType == TSTextFieldTypePhone && toBeString.length > PhoneLength) {
+            } else if (self.textfieldType == TSTextFieldTypeName2 && toBeString.length > NameLength2) {
                 textField.text = [toBeString substringToIndex:PhoneLength];
-            } else if (self.textfieldType == TSTextFieldTypePassword && toBeString.length > PassWordLength) {
+            }else if (self.textfieldType == TSTextFieldTypePhone && toBeString.length > PhoneLength) {
+                textField.text = [toBeString substringToIndex:PhoneLength];
+            }else if (self.textfieldType == TSTextFieldTypePassword && toBeString.length > PassWordLength) {
                 textField.text = [toBeString substringToIndex:PassWordLength];
             } else if (self.textfieldType == TSTextFieldTypeAuth && toBeString.length > AuthCodeLength) {
                 textField.text = [toBeString substringToIndex:AuthCodeLength];
@@ -129,7 +132,7 @@
         return NO;
     }
     
-    // if input punctuation,return NO
+    
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", Symbol];
     return ![pred evaluateWithObject: string];
 }

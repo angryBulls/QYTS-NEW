@@ -14,7 +14,8 @@ typedef NS_ENUM(NSInteger, TSTextFieldType) {
     TSTextFieldTypePassword,
     TSTextFieldTypeAuth,
     TSTextFieldTypeDatePicker,
-    TSTextFieldTypeInviteCode // 邀请码
+    TSTextFieldTypeInviteCode, // 邀请码
+    TSTextFieldTypeName2
 };
 
 typedef void (^TextFieldShouldReturnBlock)();

@@ -81,7 +81,7 @@
 }
 
 - (void)p_createrightTextfieldViews {
-    NSArray *placeholderArray = @[@"请输入姓名", @"请输入手机号", @"请输入验证码", @"中文/英文/数字组合 最低六位数", @"请输入再次输入密码", @"请输入邀请码(非必填)"];
+    NSArray *placeholderArray = @[@"请输入姓名", @"请输入手机号", @"请输入验证码", @"请输入6-18位英文/字母组合", @"请输入再次输入密码", @"请输入邀请码(非必填)"];
     
     CGFloat rightViewX = W(88);
     CGFloat rightViewY = 10;
@@ -233,7 +233,7 @@
     __block NSString *errorStr = @"";
     [self.textfieldArray enumerateObjectsUsingBlock:^(TSTextFieldView *textFieldView, NSUInteger idx, BOOL * _Nonnull stop) {
         if (0 == idx) { // 姓名
-            if (0 == textFieldView.textField.text.length) {
+            if (0 == textFieldView.textField.text.length <2 || textFieldView.textField.text.length>14) {
                 errorStr = @"请填写姓名";
                 *stop = YES;
             }
@@ -247,22 +247,22 @@
         }
         
         if (2 == idx) { // 验证码
-            if (0 == textFieldView.textField.text.length) {
+            if (4 != textFieldView.textField.text.length) {
                 errorStr = @"请填写验证码";
                 *stop = YES;
             }
         }
         
         if (3 == idx) { // 密码1
-            if (textFieldView.textField.text.length < 6) {
-                errorStr = @"请填写6位密码";
+            if (textFieldView.textField.text.length < 6 ||textFieldView.textField.text.length > 18) {
+                errorStr = @"请填写正确密码";
                 *stop = YES;
             }
         }
         
         if (4 == idx) { // 密码2
-            if (textFieldView.textField.text.length < 6) {
-                errorStr = @"请填写6位密码";
+            if (textFieldView.textField.text.length < 6 ||textFieldView.textField.text.length > 18) {
+                errorStr = @"请填写正确密码";
                 *stop = YES;
             } else {
                 TSTextFieldView *textFieldView1 = self.textfieldArray[3];
@@ -274,10 +274,10 @@
         }
         
         if (5 == idx) { // 邀请码
-//            if (textFieldView.textField.text.length < 4) {
-//                errorStr = @"请填写4位邀请码";
-//                *stop = YES;
-//            }
+            if (textFieldView.textField.text.length != 4 || textFieldView.textField.text.length != 0) {
+                errorStr = @"请填写正确邀请码";
+                *stop = YES;
+            }
         }
     }];
     
