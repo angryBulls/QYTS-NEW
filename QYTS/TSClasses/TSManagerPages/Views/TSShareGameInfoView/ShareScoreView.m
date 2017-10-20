@@ -77,7 +77,16 @@
 - (void)setMatchInfoModel:(ShareMatchInfoModel *)matchInfoModel {
     _matchInfoModel = matchInfoModel;
     
-    NSInteger stageCount = matchInfoModel.homeScores.count;
+    NSInteger stageCount ;
+    
+    if (4 == matchInfoModel.sectionType.intValue) {
+        stageCount = 3;
+    }else if (3 == matchInfoModel.sectionType.intValue){
+        stageCount = 2;
+    }else{
+        stageCount =  matchInfoModel.homeScores.count;
+    }
+    
     CGFloat stageSubViewW = (self.width - self.teamTypeView.width)/stageCount;
     CGFloat stageSubViewH = self.height;
     
@@ -217,7 +226,11 @@
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.awayScores[@"thirdOt"]];
                 }
             }
+            if ([subLabel.text isEqualToString:@""]||[subLabel.text isEqualToString:@"null"]) {
+                subLabel.text = @"0";
+            }
         }];
+        
     }];
 }
 
