@@ -59,7 +59,7 @@
     
     // add stage view
     NSArray *stagArray = @[@"", @"第一节", @"第二节", @"第三节", @"第四节", @"加时赛 1", @"加时赛 2", @"加时赛 3"];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         if (3 == [gameTableDict[@"sectionType"] intValue]) {
             stagArray = @[@"", @"第一节", @"加时赛"];
         } else if (4 == [gameTableDict[@"sectionType"] intValue]) {
@@ -75,7 +75,7 @@
     
     // add host view
     NSArray *hostArray = @[@"主队", @"0", @"0", @"0", @"0", @"0", @"0", @"0"];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         if (3 == [gameTableDict[@"sectionType"] intValue]) {
             hostArray = @[@"主队", @"0", @"0"];
         } else if (4 == [gameTableDict[@"sectionType"] intValue]) {
@@ -89,7 +89,7 @@
     
     // add guest view
     NSArray *guestArray = @[@"客队", @"0", @"0", @"0", @"0", @"0", @"0", @"0"];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         if (3 == [gameTableDict[@"sectionType"] intValue]) {
             guestArray = @[@"客队", @"0", @"0"];
         } else if (4 == [gameTableDict[@"sectionType"] intValue]) {

@@ -212,7 +212,7 @@
         refNameArray = @[@"*主裁判：", @"请输入姓名", @"第一副裁：", @"请输入姓名", @"第二副裁：", @"请输入姓名", @"技术代表：", @"请输入姓名", @"*技术统计：", @"请输入姓名"];
         self.bgView.height = H(260);
         MarginY = (self.bgView.height - 5*refLabH)/6;
-    } else if (2 == self.gameOverListModel.ruleType.intValue) { // 3V3
+    } else if (2 == self.gameOverListModel.ruleType.intValue) { // 3X3
         refNameArray = @[@"主裁判：", @"请输入姓名", @"技术代表：", @"请输入姓名", @"记录员：", @"请输入姓名"];
     }
     

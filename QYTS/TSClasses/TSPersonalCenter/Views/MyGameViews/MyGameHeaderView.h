@@ -12,7 +12,7 @@
 
 typedef NS_ENUM(NSInteger, RulesSelect) {
     RulesSelect5V5,
-    RulesSelect3V3
+    RulesSelect3X3
 };
 
 @protocol MyGameHeaderViewDelegate <NSObject>

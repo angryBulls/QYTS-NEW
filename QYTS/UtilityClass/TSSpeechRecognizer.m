@@ -219,8 +219,8 @@
         NSString *bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/5V5Basketball.bnf",appPath];
         TSDBManager *dbManager = [[TSDBManager alloc] init];
         NSDictionary *gameTableDict = [dbManager getObjectById:GameId fromTable:GameTable];
-        if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3 加载的bnf
-            bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/3V3Basketball.bnf",appPath];
+        if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3 加载的bnf
+            bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/3X3Basketball.bnf",appPath];
         }
         
         grammarContent = [TSToolsMethod readFile:bnfFilePath];

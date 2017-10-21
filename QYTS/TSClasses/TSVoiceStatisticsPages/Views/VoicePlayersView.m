@@ -144,7 +144,7 @@
     int playersCount = 5;
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         playersCount = 3;
     }
     
@@ -159,7 +159,7 @@
     CGFloat numbBtnY = (hostNumbView.height - numbBtnWH)*0.5;
     
     CGFloat MarginX = (hostNumbViewTotalW - playersCount*numbBtnWH)/4;
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         MarginX = W(20);
     }
     
@@ -271,8 +271,8 @@
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
     RuleType ruleType = RuleType5V5;
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
-        ruleType = RuleType3V3;
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
+        ruleType = RuleType3X3;
     }
     TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) ruleType:ruleType];
     [instView show];
@@ -282,8 +282,8 @@
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
     RuleType ruleType = RuleType5V5;
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
-        ruleType = RuleType3V3;
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
+        ruleType = RuleType3X3;
     }
     TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) ruleType:ruleType];
     [instView show];
@@ -365,6 +365,9 @@
         
         NSMutableDictionary *paramsDict1 = [NSMutableDictionary dictionary];
         TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict1];
+        [SVProgressHUD show];
+
+
         
         [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
             DDLog(@"up load data returnValue is:%@", returnValue);

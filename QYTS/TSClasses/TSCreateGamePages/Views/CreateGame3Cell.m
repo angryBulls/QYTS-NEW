@@ -85,7 +85,7 @@
         [dpButton setTitle:returnValue forState:UIControlStateNormal];
         [self p_dpBtnClick:dpButton];
         self.createGameModel.selectValue = returnValue;
-        if ([self.createGameModel.selectValue containsString:@"V"]) {
+        if ([self.createGameModel.selectValue isEqualToString:@"3X3"] || [self.createGameModel.selectValue isEqualToString:@"5V5"]) {
             if ([self.delegate respondsToSelector:@selector(getDpBtnSelectValue:)]) {
                 [self.delegate getDpBtnSelectValue:returnValue];
             }

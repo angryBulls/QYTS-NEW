@@ -187,7 +187,7 @@
     // 检测所有信息是否已经录全
     int MinPlayers = 5;
     TSCreateGameModel *gameModel = self.createGameModelArray[0][1];
-    if ([gameModel.selectValue isEqualToString:@"3V3"]) {
+    if ([gameModel.selectValue isEqualToString:@"3X3"]) {
         MinPlayers = 3;
     }
     

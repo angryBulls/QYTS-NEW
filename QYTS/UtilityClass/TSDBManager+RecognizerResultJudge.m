@@ -60,7 +60,7 @@
             int startPlayingNum = [self getStartPlayingNumWithDict:insertDBDict];
             TSDBManager *tSDBManager = [[TSDBManager alloc] init];
             NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
-            if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+            if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
                 if (startPlayingNum >= 3) {
                     return NO;
                 }

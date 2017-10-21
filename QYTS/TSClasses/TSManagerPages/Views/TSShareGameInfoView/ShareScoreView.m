@@ -226,8 +226,9 @@
                     subLabel.text = [NSString stringWithFormat:@"%@", matchInfoModel.awayScores[@"thirdOt"]];
                 }
             }
-            if ([subLabel.text isEqualToString:@""]||[subLabel.text isEqualToString:@"null"]) {
-                subLabel.text = @"0";
+            
+            if ([subLabel.text isEqualToString:@""]||[subLabel.text isEqualToString:@"null"]||[subLabel.text isEqualToString:@"(null)"]) {
+                subLabel.text = @"-";
             }
         }];
         

@@ -149,7 +149,7 @@
 }
 
 - (void)p_statementBtn3Click { // 使用说明
-    TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:self.view.bounds ruleType:RuleType3V3];
+    TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:self.view.bounds ruleType:RuleType3X3];
     [instView show];
 }
 

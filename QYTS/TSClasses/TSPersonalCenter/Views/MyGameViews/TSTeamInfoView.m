@@ -143,7 +143,7 @@
     self.hostInfoView.bottomName = matchInfoModel.homeTeamName;
     self.guestInfoView.bottomName = matchInfoModel.awayTeamName;
     if (2 == matchInfoModel.ruleType.intValue) {
-        self.ruleTypeLab.text = @"3V3";
+        self.ruleTypeLab.text = @"3X3";
     }
 }
 @end

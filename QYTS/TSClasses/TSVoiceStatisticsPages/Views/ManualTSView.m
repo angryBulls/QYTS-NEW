@@ -99,7 +99,7 @@
     NSArray *topBtnNames = @[@"罚篮中", @"罚篮不中", @"两分中", @"两分不中", @"三分中", @"三分不中"];
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         topBtnNames = @[@"罚篮中", @"罚篮不中", @"一分中", @"一分不中", @"两分中", @"两分不中"];
     }
     

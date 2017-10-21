@@ -213,7 +213,7 @@
                 [resultBtn setTitle:percentage forState:UIControlStateNormal];
             }
         } else if (3 == idx || 4 == idx) { // 2分球或者1分球
-            if (2 == self.ruleType) { // 3V3赛制
+            if (2 == self.ruleType) { // 3X3赛制
                 NSString *onePointsHit = @"";
                 playerModel.OnePointsHit.length ? (onePointsHit = playerModel.OnePointsHit) : (onePointsHit = @"0");
                 
@@ -253,7 +253,7 @@
                 }
             }
         } else if (5 == idx || 6 == idx) { // 3分球或者2分球
-            if (2 == self.ruleType) { // 3V3赛制
+            if (2 == self.ruleType) { // 3X3赛制
                 NSString *twoPointsHit = @"";
                 playerModel.TwoPointsHit.length ? (twoPointsHit = playerModel.TwoPointsHit) : (twoPointsHit = @"0");
                 

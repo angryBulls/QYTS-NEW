@@ -20,7 +20,7 @@
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = TSHEXCOLOR(0x27395D);
         _returnBlock = returnBlock;
-        _segmentArray = @[@"5V5", @"3V3"];
+        _segmentArray = @[@"5V5", @"3X3"];
         [self p_AddSubViews];
     }
     return self;

@@ -10,7 +10,7 @@
 
 typedef NS_ENUM(NSInteger, RuleType) {
     RuleType5V5,
-    RuleType3V3
+    RuleType3X3
 };
 
 @interface TSInstructionsView : UIView

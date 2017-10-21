@@ -10,7 +10,7 @@
 
 @interface MyGameOverModel : NSObject
 @property (nonatomic, copy) NSString *beginDate;
-@property (nonatomic, copy) NSString *count3V3;
+@property (nonatomic, copy) NSString *count3X3;
 @property (nonatomic, copy) NSString *count5V5;
 @property (nonatomic, copy) NSString *endDate;
 @property (nonatomic, strong) NSArray *matchList;

@@ -76,7 +76,7 @@
     topStatisticView.titleArray = @[@"得分", @"罚篮", @"命中率", @"二分球", @"命中率", @"三分球", @"命中率"];
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         topStatisticView.titleArray = @[@"得分", @"罚篮", @"命中率", @"一分球", @"命中率", @"二分球", @"命中率"];
         topStatisticView.ruleType = 2;
     }

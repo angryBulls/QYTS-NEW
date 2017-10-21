@@ -184,8 +184,8 @@
 }
 
 - (void)p_startBtnClick:(UIButton *)startBtn {
-    if (TimeCountTypeUp == self.timeCountType) { // 如果是3V3加时赛
-        [self p_begin3V3TimeCountUpWithStartBtn:startBtn];
+    if (TimeCountTypeUp == self.timeCountType) { // 如果是3X3加时赛
+        [self p_begin3X3TimeCountUpWithStartBtn:startBtn];
         return;
     }
     
@@ -241,7 +241,7 @@
     });
 }
 
-- (void)p_begin3V3TimeCountUpWithStartBtn:(UIButton *)startBtn {
+- (void)p_begin3X3TimeCountUpWithStartBtn:(UIButton *)startBtn {
     startBtn.selected = !startBtn.selected;
     
     if (startBtn.selected) {

@@ -83,8 +83,8 @@
 - (void)p_changeBtnClick:(UIButton *)changeBtn {
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
-    if ([gameTableDict[CurrentStageDataSubmitted] isEqualToString:@"1"]) {
-        [SVProgressHUD showInfoWithStatus:@"本节数据已提交，无法修改"];
+    if ([gameTableDict[GameStatus] isEqualToString:@"1"]) {
+        [SVProgressHUD showInfoWithStatus:@"本场比赛已结束，无法修改"];
         return;
     }
     

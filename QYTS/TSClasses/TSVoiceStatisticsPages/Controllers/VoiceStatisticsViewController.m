@@ -482,7 +482,7 @@
 - (void)p_gotoTheNextStageGame:(NSNotification *)notif {
     TSCalculationTool *calculationTool = [[TSCalculationTool alloc] init];
     int stageGameTimes = [calculationTool getCurrentStageTimes];
-    if (0 == stageGameTimes) { // 3V3 加时赛
+    if (0 == stageGameTimes) { // 3X3 加时赛
         self.topView.timeCountType = TimeCountTypeUp;
     } else {
         self.topView.timeCountType = TimeCountTypeDown;
@@ -503,7 +503,7 @@
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeClear];
     
     //判断是否有节次未提交
-    NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    __block NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     NSString *gameQuartArr = [self.tSDBManager getObjectById:GameId fromTable:GameTable][GameQuaretArr];
     NSMutableArray *gameArrrr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
     
@@ -526,8 +526,8 @@
 
             [self p_setupGameStatusWithSuccess:YES andStateArr:nil];
             
-            
-            if (0 == [gameTableDict[GameStatus] intValue]) {
+            gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+            if (0 == [gameTableDict[GameStatus] intValue] ) {
                 [self p_updateCurrentStageIfSendDataSuccess];
                 [self.tSDBManager initPlayingTimesOnce];
             } else {
@@ -549,7 +549,7 @@
         
         
         [self p_setupGameStatusWithSuccess:NO andStateArr:gameArrrr];
-        
+        gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         
         if (0 == [gameTableDict[GameStatus] intValue]) {
             [self p_updateCurrentStageIfSendDataSuccess];
@@ -571,7 +571,7 @@
 //提交未提交的节次
 -(void)submitOldQuart{
     NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
+    __block NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     NSString *gameArrStr = gameTableDict0[GameQuaretArr];
     NSMutableArray *arr =[NSMutableArray arrayWithArray:[gameArrStr componentsSeparatedByString:@","]];
     
@@ -607,8 +607,21 @@
         
         // 更新比赛进行状态
         [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         
-        [self p_sendCurrentStageData];
+        if (str.length == 0 && [gameTableDict0[GameStatus] integerValue] == 1) {
+//            [self p_updateCurrentStageIfSendDataSuccess];
+//            [self.tSDBManager initPlayingTimesOnce];
+            [self p_pushFullManagerViewController];
+            [SVProgressHUD dismiss];
+            
+        } else {
+//            [SVProgressHUD show];
+            [self p_sendCurrentStageData];
+        }
+        
+        [SVProgressHUD dismiss];
+        
         
         
     } WithErrorBlock:^(id errorCode) {
@@ -626,7 +639,7 @@
         // 更新比赛进行状态
         [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
         
-        [SVProgressHUD dismiss];
+        
         
     }];
    
@@ -671,7 +684,7 @@
 
 - (BOOL)p_refuseIfDivideAndLastStage {
     NSDictionary *gameTableDict = [self.tSDBManager getObjectById:GameId fromTable:GameTable];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3分差2分以内，不能结束比赛
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3分差2分以内，不能结束比赛
         if ([gameTableDict[CurrentStage] isEqualToString:OverTime1]) { // 最后一节，比分相同
             int scoreGap = abs(self.topView.gameModel.scoreTotalH.intValue - self.topView.gameModel.scoreTotalG.intValue);
             DDLog(@"scoreGap is:%d", scoreGap);
@@ -690,7 +703,7 @@
 - (void)p_updateCurrentStageIfSendDataSuccess { // 本节数据提交成功后，更新节数
     NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         if (3 == [gameTableDict[@"sectionType"] intValue]) { // 1X10
             gameTableDict[CurrentStage] = OverTime1;
             gameTableDict[CurrentStageDataSubmitted] = @"0";
@@ -725,7 +738,7 @@
     
     TSCalculationTool *calculationTool = [[TSCalculationTool alloc] init];
     int stageGameTimes = [calculationTool getCurrentStageTimes];
-    if (0 == stageGameTimes) { // 3V3 加时赛
+    if (0 == stageGameTimes) { // 3X3 加时赛
         self.topView.timeCountType = TimeCountTypeUp;
     } else {
         self.topView.timeCountType = TimeCountTypeDown;
@@ -769,10 +782,12 @@
     
     __block BOOL gameOver = NO;
     NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
-    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
+    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
         if (3 == [gameTableDict[@"sectionType"] intValue]) { // 1X10
             if (self.topView.gameModel.scoreTotalH.intValue != self.topView.gameModel.scoreTotalG.intValue) { // 比赛结束
+                
                 gameOver = YES;
+                
             }
         } else if (4 == [gameTableDict[@"sectionType"] intValue]) { // 2X8
             if ([gameTableDict[CurrentStage] isEqualToString:StageTwo] || [gameTableDict[CurrentStage] isEqualToString:OverTime1]) {
@@ -795,6 +810,8 @@
     
     if (gameOver == YES) { // 比赛结束
         gameTableDict[GameStatus] = @"1";
+        
+        
     } else {
         gameTableDict[GameStatus] = @"0";
     }

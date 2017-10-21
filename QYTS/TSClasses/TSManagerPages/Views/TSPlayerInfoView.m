@@ -34,6 +34,7 @@
     headImageView.backgroundColor = TSHEXCOLOR(0x1b2a47);
     headImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:headImageView];
+    headImageView.image = [UIImage imageNamed:@"player_defaultHead_Image"];
     self.headImageView = headImageView;
     
     // add number and player name label

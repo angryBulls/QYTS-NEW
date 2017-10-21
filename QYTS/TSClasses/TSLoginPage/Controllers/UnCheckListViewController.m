@@ -20,7 +20,7 @@
 @interface UnCheckListViewController () <UITableViewDelegate, UITableViewDataSource, MyGameUnCheckCellDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) TSNoGameTipsView *noGameTipsView;
-@property (nonatomic, assign) RulesSelect rulesSelect; // 赛制  0:5V5   1:3V3
+@property (nonatomic, assign) RulesSelect rulesSelect; // 赛制  0:5V5   1:3X3
 @property (nonatomic, strong) NSMutableArray *game5DataArray;
 @property (nonatomic, strong) NSMutableArray *game3DataArray;
 @property (nonatomic, assign) NSInteger game5PageIndex;
@@ -87,11 +87,11 @@
         if (0 == index) {
             rulesSelect = RulesSelect5V5;
         } else {
-            rulesSelect = RulesSelect3V3;
+            rulesSelect = RulesSelect3X3;
         }
         
         self.rulesSelect = rulesSelect;
-        if (RulesSelect3V3 == rulesSelect) {
+        if (RulesSelect3X3 == rulesSelect) {
             if (0 == self.game3DataArray.count) {
                 [self getNetworkData];
                 return;
@@ -108,7 +108,7 @@
             }
         }
         
-        if ((RulesSelect3V3 == self.rulesSelect)) {
+        if ((RulesSelect3X3 == self.rulesSelect)) {
             if (0 == self.game3DataArray.count) {
                 self.noGameTipsView.hidden = NO;
             } else {
@@ -147,7 +147,7 @@
 - (void)getNetworkData { // 下拉刷新
     if (RulesSelect5V5 == self.rulesSelect) {
         self.game5PageIndex = 1;
-    } else if (RulesSelect3V3 == self.rulesSelect) {
+    } else if (RulesSelect3X3 == self.rulesSelect) {
         self.game3PageIndex = 1;
         
     }
@@ -158,7 +158,7 @@
 - (void)p_loadMoreData { // 上拉加载
     if (RulesSelect5V5 == self.rulesSelect) {
         self.game5PageIndex ++;
-    } else if (RulesSelect3V3 == self.rulesSelect) {
+    } else if (RulesSelect3X3 == self.rulesSelect) {
         self.game3PageIndex ++;
         
     }
@@ -171,7 +171,7 @@
     if (RulesSelect5V5 == self.rulesSelect) {
         paramsDict[@"pageIndex"] = @(self.game5PageIndex);
         paramsDict[@"ruleType"] = @1;
-    } else if (RulesSelect3V3 == self.rulesSelect) {
+    } else if (RulesSelect3X3 == self.rulesSelect) {
         paramsDict[@"pageIndex"] = @(self.game3PageIndex);
         paramsDict[@"ruleType"] = @2;
     }
@@ -192,7 +192,7 @@
             } else {
                 self.noGameTipsView.hidden = NO;
             }
-        } else if (RulesSelect3V3 == self.rulesSelect) {
+        } else if (RulesSelect3X3 == self.rulesSelect) {
             if (0 == refreshType) {
                 [self.game3DataArray removeAllObjects];
             }
@@ -211,7 +211,7 @@
         if (RulesSelect5V5 == self.rulesSelect && 0 == refreshType) {
             [self.game5DataArray removeAllObjects];
             self.noGameTipsView.hidden = NO;
-        } else if (RulesSelect3V3 == self.rulesSelect && 0 == refreshType) {
+        } else if (RulesSelect3X3 == self.rulesSelect && 0 == refreshType) {
             [self.game3DataArray removeAllObjects];
             self.noGameTipsView.hidden = NO;
         }
@@ -251,7 +251,7 @@
         } else {
             cell.bottomLine.hidden = NO;
         }
-    } else if (RulesSelect3V3 == self.rulesSelect) {
+    } else if (RulesSelect3X3 == self.rulesSelect) {
         cell.gameOverListModel = self.game3DataArray[indexPath.row];
         if (0 == indexPath.row) {
             cell.rectCornerStyle = UIRectCornerTopLeft | UIRectCornerTopRight;
@@ -275,7 +275,7 @@
 - (void)gameRulesSelect:(RulesSelect)rulesSelect {
     self.rulesSelect = rulesSelect;
     
-    if (RulesSelect3V3 == rulesSelect) {
+    if (RulesSelect3X3 == rulesSelect) {
         if (0 == self.game3DataArray.count) {
             [self getNetworkData];
             return;

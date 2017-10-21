@@ -71,7 +71,7 @@
         if (0 == index) {
             rulesSelect = RulesSelect5V5;
         } else {
-            rulesSelect = RulesSelect3V3;
+            rulesSelect = RulesSelect3X3;
         }
         
         if ([self.delegate respondsToSelector:@selector(gameRulesSelect:)]) {
@@ -96,10 +96,10 @@
         [attrsString addAttribute:NSForegroundColorAttributeName value:TSHEXCOLOR(0x8CDBFF) range:NSMakeRange(5, gameOverModel.count5V5.length)];
         self.game5CountLab.attributedText = attrsString;
     }
-    if (gameOverModel.count3V3.length) {
-        self.game3CountLab.text = [NSString stringWithFormat:@"3V3比赛%@场", gameOverModel.count3V3];
+    if (gameOverModel.count3X3.length) {
+        self.game3CountLab.text = [NSString stringWithFormat:@"3X3比赛%@场", gameOverModel.count3X3];
         NSMutableAttributedString *attrsString = [[NSMutableAttributedString alloc] initWithString:self.game3CountLab.text];
-        [attrsString addAttribute:NSForegroundColorAttributeName value:TSHEXCOLOR(0x8CDBFF) range:NSMakeRange(5, gameOverModel.count3V3.length)];
+        [attrsString addAttribute:NSForegroundColorAttributeName value:TSHEXCOLOR(0x8CDBFF) range:NSMakeRange(5, gameOverModel.count3X3.length)];
         self.game3CountLab.attributedText = attrsString;
     }
 }

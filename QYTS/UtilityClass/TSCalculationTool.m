@@ -534,7 +534,7 @@
                 } else if (4 == [gameTableDict[@"sectionType"] intValue]) { // 2节X8分钟
                     stageGameTimes = 480;
                 }
-            } else if ([stageCount isEqualToString:OverTime1] && 2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3 加时赛
+            } else if ([stageCount isEqualToString:OverTime1] && 2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3 加时赛
                 stageGameTimes = 0;
             } else { // 加时赛
                 stageGameTimes = 300;

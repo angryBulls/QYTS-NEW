@@ -45,7 +45,7 @@
             model.matchDate = [fmt stringFromDate:[NSDate date]];
         } else if (1 == i) {
             model.leftTitle = @"选择赛制：";
-            model.dpBtnArray = @[@"5V5", @"3V3"];
+            model.dpBtnArray = @[@"5V5", @"3X3"];
             model.selectValue = [model.dpBtnArray firstObject];
         } else if (2 == i) {
             model.leftTitle = @"选择时间：";
@@ -177,7 +177,7 @@
     
     int MinPlayers = 5;
     TSCreateGameModel *gameModel = self.createGameModelArray[0][1];
-    if ([gameModel.selectValue isEqualToString:@"3V3"]) {
+    if ([gameModel.selectValue isEqualToString:@"3X3"]) {
         MinPlayers = 3;
     }
     
@@ -281,7 +281,8 @@
     // 刷新“选择时间”的数据
     TSCreateGameModel *model = [[TSCreateGameModel alloc] init];
     model.leftTitle = @"选择时间：";
-    if ([selectValue isEqualToString:@"3V3"]) {
+    
+    if ([selectValue isEqualToString:@"3X3"]) {
         model.dpBtnArray = @[@"1节X10分钟", @"2节X8分钟"];
     } else {
         model.dpBtnArray = @[@"4节X10分钟", @"4节X12分钟"];
@@ -293,7 +294,7 @@
     [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:2 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
     
     // 刷新可录入球员的数量
-    if ([selectValue isEqualToString:@"3V3"]) {
+    if ([selectValue isEqualToString:@"3X3"]) {
         self.createGameModelArray[1] = [self getPlayerDataWithRuleType:2];
     } else {
         self.createGameModelArray[1] = [self getPlayerDataWithRuleType:1];

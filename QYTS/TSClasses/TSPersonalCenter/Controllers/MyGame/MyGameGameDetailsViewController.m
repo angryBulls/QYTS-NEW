@@ -158,7 +158,7 @@
         }
         
         self.recorderInfoView.contentArray = contentArray;
-    } else if (2 == infoModel.ruleType.intValue) { // 3V3
+    } else if (2 == infoModel.ruleType.intValue) { // 3X3
         self.recorderInfoView.titleArray = @[@"主裁判：", @"技术代表：", @"记录员："];
         NSMutableArray *contentArray = [NSMutableArray array];
         if (infoModel.mainReferee.length) {

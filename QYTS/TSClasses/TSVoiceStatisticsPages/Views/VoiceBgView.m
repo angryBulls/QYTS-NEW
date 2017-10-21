@@ -52,8 +52,8 @@
 //    TSDBManager *tSDBManager = [[TSDBManager alloc] init];
 //    NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
 //    RuleType ruleType = RuleType5V5;
-//    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3V3
-//        ruleType = RuleType3V3;
+//    if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3
+//        ruleType = RuleType3X3;
 //    }
 //    TSInstructionsView *instView = [[TSInstructionsView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) ruleType:ruleType];
 //    [instView show];
