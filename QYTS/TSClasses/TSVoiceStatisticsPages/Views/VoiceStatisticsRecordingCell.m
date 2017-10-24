@@ -41,19 +41,16 @@
     return self;
 }
 
--(void)setMesArr:(NSArray *)mesArr{
-    _mesArr = mesArr;
-    
-    NSString *text = mesArr[0];
-    self.timeLabel.text = [text substringToIndex:text.length-3];
-    if ([text hasSuffix:@"1"]) {
+-(void)setModel:(PcmModel *)model{
+    _model = model;
+    self.timeLabel.text = [model.pcmPath componentsSeparatedByString:@"/"].lastObject;
+    if (model.areadlyPlay) {
         _dotIm.hidden = YES;
     }
     else
     {
         _dotIm.hidden = NO;
     }
-    
     
 }
 

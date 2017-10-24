@@ -45,12 +45,12 @@
 
 - (void)p_checkVoiceDB {
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
-//    NSString *status = [tSDBManager getObjectById:GameStatus fromTable:GameTable];
+    //    NSString *status = [tSDBManager getObjectById:GameStatus fromTable:GameTable];
     NSDictionary *gameTableDic = [tSDBManager getObjectById:GameId fromTable:GameTable];
     NSString *status = gameTableDic[GameStatus];
     NSString *quare =  gameTableDic[GameQuaretArr];
-//    NSString *quare = [tSDBManager getObjectById:GameQuaretArr fromTable:GameTable];
-//    if ([TSToolsMethod checkVoiceDBExists]) {
+    //    NSString *quare = [tSDBManager getObjectById:GameQuaretArr fromTable:GameTable];
+    //    if ([TSToolsMethod checkVoiceDBExists]) {
     if ([status isEqualToString:@"0"] || quare.length > 0) {
         UIAlertView *dbAlertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"比赛还没有结束，是否继续比赛？" delegate:self cancelButtonTitle:@"否" otherButtonTitles:@"是", nil];
         dbAlertView.tag = 1;
@@ -68,6 +68,7 @@
         
         NSString *key = @"CFBundleShortVersionString";
         NSString *currentVersion = [NSBundle mainBundle].infoDictionary[key];
+        
         if (returnValue[@"entity"][@"version"]) {
             if (![currentVersion isEqualToString:returnValue[@"entity"][@"version"]]) {
                 if (returnValue[@"entity"][@"url"]) {
@@ -261,10 +262,10 @@
         }
     } else if (2 == alertView.tag) {
         if (self.updateUrl.length) {
-            // https://itunes.apple.com/cn/app/yu-yin-ji-tong/id1273077473?mt=8
+//            NSString *str = @"https://itunes.apple.com/cn/app/%E8%AF%AD%E9%9F%B3%E6%8A%80%E7%BB%9F/id1273077473?mt=8";
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:self.updateUrl]];
         }
-        [self p_showUpdateAlertTips];
+
     }
 }
 @end

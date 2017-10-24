@@ -263,13 +263,16 @@
     if ([actionSheet.title containsString:@"作废"]) { // 作废本场比赛
         if (1 == buttonIndex) {
             [self p_matchBlankOut];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"removeArr" object:nil];
         }
         return;
     }
     
     if ([actionSheet.title containsString:@"下一场"]) {
         if (1 == buttonIndex) {
+            
             [self p_initLocalDataBase];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"removeArr" object:nil];
         }
     }
 }

@@ -241,6 +241,17 @@
             }
         }
     }];
+    
+    [self.createGameModelArray[1] enumerateObjectsUsingBlock:^(TSCreateGameModel *createGameModel, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (idx > 0) {
+            if (createGameModel.name.length) {
+                [phoneArray addObject:createGameModel.phone];
+            }
+        }
+    }];
+    
+    
+    
     NSSet *phoneSet = [NSSet setWithArray:phoneArray];
     if (phoneSet.count != phoneArray.count) {
         [SVProgressHUD showInfoWithStatus:@"手机号有重复"];

@@ -63,7 +63,7 @@ static NSString * const TitleLabelText = @"语音技统使用说明";
     if (RuleType3X3 == self.ruleType) {
         contentImage = [UIImage imageNamed:@"use_instructions_content_image"];
     } else if (RuleType5V5 == self.ruleType) {
-        contentImage = [UIImage imageNamed:@"use_instructions_5v5_content_image"];
+        contentImage = [UIImage imageNamed:@"use_instructions_content_image"];
     }
     UIImageView *contentImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, H(10), bgScrollView.width, H(contentImage.size.height))];
     contentImageView.image = contentImage;

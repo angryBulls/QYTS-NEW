@@ -19,11 +19,12 @@
 #import "RecognizerFactory.h"
 #import "iflyMSC/IFlyDataUploader.h"
 #import "ISRDataHelper.h"
+#import "PcmModel.h"
 
 #define GRAMMAR_TYPE_BNF @"bnf"
 
 @interface TSSpeechRecognizer ()
-//@property (nonatomic, strong) TSDBManager *dbManager;
+@property (nonatomic, strong) TSDBManager *dbManager;
 
 // ifly properties
 //语法识别对象
@@ -34,32 +35,53 @@
 @property (nonatomic, strong) IFlyDataUploader *uploader;
 @property (nonatomic, strong) NSMutableString *curResult; //当前session的结果
 @property (nonatomic) BOOL isCanceled;
+@property (nonatomic ,copy) NSString *date ;
+@property (nonatomic, strong) NSMutableArray *pcmArrs;
+
+
 @end
 
 @implementation TSSpeechRecognizer
-//- (TSDBManager *)dbManager {
-//    
-//    if (!_dbManager) {
-//        _dbManager = [[TSDBManager alloc] init];
-//    }
-//    return _dbManager;
-//}
+
+-(NSMutableArray *)pcmArrs{
+    if (_pcmArrs == nil) {
+        _pcmArrs = [NSMutableArray array];
+    }
+    return _pcmArrs;
+}
 
 + (instancetype)defaultInstance {
+    
     static dispatch_once_t onceToken;
     static TSSpeechRecognizer *speechRecognizer = nil;
+    
     dispatch_once(&onceToken, ^{
         speechRecognizer = [[self alloc] init];
     });
     return speechRecognizer;
 }
 
+
+-(void)refreshFMDB{
+    
+    _dbManager = [[TSDBManager alloc] init];
+}
+
 - (instancetype)init {
     if (self = [super init]) {
+        
         [self p_setupSpeechRecognizer];
+        
+         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeArr) name:@"removeArr" object:nil];
     }
     
     return self;
+}
+
+-(void)removeArr{
+    
+    [self.pcmArrs removeAllObjects];
+    
 }
 
 - (void)p_setupSpeechRecognizer {
@@ -158,21 +180,37 @@
     
     // 保存当前识别结果
     NSDictionary *resultDict = [TSToolsMethod dictionaryWithJsonString:[dic allKeys][0]];
-   TSDBManager * dbManager = [[TSDBManager alloc] init];
-    [dbManager saveOneResultDataWithDict:resultDict saveDBStatusSuccessBlock:^(NSDictionary *insertDBDict) {
+
+    [self.dbManager saveOneResultDataWithDict:resultDict saveDBStatusSuccessBlock:^(NSDictionary *insertDBDict) {
         if ([self.delegate respondsToSelector:@selector(onResultsString:insertDBDict:recognizerResult:)]) {
-            NSString *returnString = [dbManager appendResultStringWithDict:insertDBDict];
+            NSString *returnString = [_dbManager appendResultStringWithDict:insertDBDict];
             DDLog(@"returnString is:%@", returnString);
+            
+            [_pcmArrs removeLastObject];
             
             [self.delegate onResultsString:returnString insertDBDict:insertDBDict recognizerResult:YES];
         }
     } saveDBStatusFailBlock:^(NSString *error) {
         
-        [self saveVedio];
         [self.delegate onResultsString:self.curResult insertDBDict:@{} recognizerResult:NO];
+        
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setValue:_pcmArrs forKey:@"pcmArr"];
+        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
+            [self.delegate backPcmModelDic:dic];
+        }
+        
+        
+    } saveDBStatusWrongBlock:^(NSString *error) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [dic setValue:_pcmArrs forKey:@"pcmArr"];
+        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
+            [self.delegate backPcmModelDic:dic];
+        }
+        
     }];
     
-    DDLog(@"dbManager info is:%@", dbManager);
+//    DDLog(@"dbManager info is:%@", dbManager);
 }
 
 /**
@@ -266,14 +304,23 @@
     //保存录音文件
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"HH:mm:ss"];
-    NSString *date = [formatter stringFromDate:[NSDate date]];
-    NSLog(@"date = %@",date);
+    _date = [formatter stringFromDate:[NSDate date]];
+    NSLog(@"date = %@",_date);
     
     IFlySpeechRecognizer *fly =   [IFlySpeechRecognizer sharedInstance];
-    [fly setParameter:[NSString stringWithFormat:@"%@000.pcm",date] forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
     
+    [fly setParameter:[NSString stringWithFormat:@"%@.pcm",_date] forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
     
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths objectAtIndex:0];
     
+    PcmModel *play = [[PcmModel alloc] init];
+    play.areadlyPlay = NO;
+    play.saveIn = YES;
+    play.pcmPath = [NSString stringWithFormat:@"%@/%@.pcm",path,_date];
+    
+    [self.pcmArrs addObject:play];
+ 
     
 }
 
@@ -282,11 +329,12 @@
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
         DDLog(@"识别开启成功");
-
+        [self saveVedio];
         [self.curResult setString:@""];
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
     }
+    
 }
 - (void)stopListening {
     

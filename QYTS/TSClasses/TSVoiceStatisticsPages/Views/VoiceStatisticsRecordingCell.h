@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "PcmModel.h"
 @interface VoiceStatisticsRecordingCell : UITableViewCell
 
-@property (nonatomic ,strong)NSArray *mesArr;
 
+@property (nonatomic ,strong)PcmModel *model;
 
 @end

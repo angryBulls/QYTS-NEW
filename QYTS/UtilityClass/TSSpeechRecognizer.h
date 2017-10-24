@@ -11,6 +11,9 @@
 @protocol TSSpeechRecognizerDelegate <NSObject>
 @optional
 - (void)onResultsString:(NSString *)resultsString insertDBDict:(NSDictionary *)insertDBDict recognizerResult:(BOOL)result;
+
+- (void)backPcmModelDic:(NSDictionary *)dic;
+
 - (void)onVolumeChanged:(int)volume;
 - (void)onEndOfSpeech;
 @end
@@ -20,6 +23,7 @@
 
 + (instancetype)defaultInstance;
 
+-(void)refreshFMDB;
 - (void)startListening;
 - (void)stopListening;
 - (void)cancel;

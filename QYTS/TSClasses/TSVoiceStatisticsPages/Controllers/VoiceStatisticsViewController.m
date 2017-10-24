@@ -22,6 +22,7 @@
 #import "iflyMSC/IFlyMSC.h"
 #import "PcmPlayer.h"
 #import "TTSConfig.h"
+#import "PcmModel.h"
 #import <Foundation/Foundation.h>
 #import<AVFoundation/AVFoundation.h>
 
@@ -96,7 +97,6 @@
     
     [self addTopViewWithPageType:PageTypeVoice];
     
-//    [self p_getPcmDateSouce];
     [self p_deleteRecodeFiles];
     
     [self p_createCenterView];
@@ -116,6 +116,14 @@
     [self p_updateStatisticsData];
     
     [self p_checkGameStatus];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
+    [speechRecognizer refreshFMDB];
+    
+    
 }
 
 -(void)p_updataMatchStatus{
@@ -149,24 +157,6 @@
 
 #pragma mark - custom method ************************************************************************************
 
--(void)p_getPcmDateSouce{
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *path = [paths objectAtIndex:0];
-    NSArray *fileList= [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-    self.pcmArr = [NSMutableArray array];
-    for (NSString *fileName in fileList)
-    {
-        if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
-            NSString *luYinName = [fileName stringByReplacingOccurrencesOfString:@".pcm" withString:@""];
-            
-            NSArray *arr = @[luYinName,[NSString stringWithFormat:@"%@/%@",path,fileName]];
-            [self.pcmArr addObject:arr];
-            
-        }
-    }
-    
-}
 
 - (void)p_createCenterView {
     // add players view
@@ -194,7 +184,7 @@
     self.centerView = centerView;
     
     self.tableView.frame = CGRectMake(0, H(37), self.centerView.width*3/5, self.centerView.height - H(37));
-    TSAbstainedView *abstainedView = [[TSAbstainedView alloc] initWithFrame:CGRectMake(0, 0, self.centerView.width, H(37)) abstentionSuccessBlock:^{ // 弃权成功
+    TSAbstainedView *abstainedView = [[TSAbstainedView alloc] initWithFrame:CGRectMake(0, 0, self.centerView.width, H(37)) abstentionSuccessBlock:^{
     }];
     [self.centerView addSubview:abstainedView];
     self.tableView.tag = 999;
@@ -367,7 +357,6 @@
     if (tableView.tag == 999) {
         VoiceStatisticsCell *cell = [VoiceStatisticsCell cellWithTableView:tableView];
         cell.titleName = self.dataShowArray[indexPath.row];
-        
         return cell;
         
     }
@@ -378,7 +367,7 @@
     }
     
     cell.backgroundColor = [UIColor clearColor];
-    cell.mesArr = _pcmArr[indexPath.row];
+    cell.model = _pcmArr[indexPath.row];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
@@ -391,8 +380,13 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView.tag != 999) {
+        
+        [self.audioPlayer stop];
+        PcmModel *model = _pcmArr[indexPath.row];
+        model.areadlyPlay = YES;
+        
         //读取声音
-        NSString *path = _pcmArr[indexPath.row][1];
+        NSString *path = model.pcmPath;
         DDLog(@"current pcm path is:%@", path);
         TTSConfig *instance = [TTSConfig sharedInstance];
         NSError *error = nil;
@@ -402,20 +396,13 @@
         
         [_audioPlayer play];
         
-        
-        NSString *newPath = [path stringByReplacingOccurrencesOfString:@"000" withString:@"001"];
-        if ([path containsString:@"000"]) {
-            [[NSFileManager defaultManager] moveItemAtPath:path toPath:newPath error:nil];
-        }
-        
-        
-        [self p_getPcmDateSouce];
+
         [_tb reloadData];
         
     }
 }
 
-#pragma mark - TSSpeechRecognizerDelegate
+#pragma mark - 4
 - (void)onResultsString:(NSString *)resultsString insertDBDict:(NSDictionary *)insertDBDict recognizerResult:(BOOL)result {
     if (result) {
         [self.dataShowArray addObject:[resultsString mutableCopy]];
@@ -429,18 +416,21 @@
         [self p_updateStatisticsData];
         
     }
-    else{
-        [self p_getPcmDateSouce];
-        [_tb reloadData];
-        
-        
-        if (_pcmArr.count) {
-            [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-        }
-        
-        
+    
+}
+
+
+-(void)backPcmModelDic:(NSDictionary *)dic{
+    self.pcmArr = dic[@"pcmArr"];
+    
+    [_tb reloadData];
+    
+    if (_pcmArr.count) {
+        [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
 }
+
+
 
 - (void)onVolumeChanged:(int)volume {
     self.volumeView.volume = volume;
@@ -533,9 +523,8 @@
             } else {
                 [self p_pushFullManagerViewController];
             }
-            
             // 更新比赛进行状态
-            [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+//            [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
             // 每节数据提交成功后，初始化所有球员的上场时间
             [SVProgressHUD showInfoWithStatus:@"提交成功"];
             
@@ -559,7 +548,7 @@
         }
         
         // 更新比赛进行状态
-        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+//        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
         
         [SVProgressHUD dismiss];
         
@@ -630,6 +619,8 @@
     } WithFailureBlock:^{
         
         [self p_setupGameStatusWithSuccess:NO andStateArr:arr];
+        
+        gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         if (0 == [gameTableDict0[GameStatus] intValue]) {
             [self p_updateCurrentStageIfSendDataSuccess];
             [self.tSDBManager initPlayingTimesOnce];
@@ -637,7 +628,11 @@
             [self p_pushFullManagerViewController];
         }
         // 更新比赛进行状态
-        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+//        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        
+        
+        
+        [SVProgressHUD dismiss];
         
         
         
@@ -671,7 +666,8 @@
     NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
     for (NSString *fileName in fileList)
     {
-        if ([fileName hasSuffix:@".pcm"] && ![fileName isEqualToString:@"record.pcm"]) {
+        
+        if ([fileName hasSuffix:@".pcm"]) {
             NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
             BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
             if (bRet) {

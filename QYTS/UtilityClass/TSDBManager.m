@@ -37,20 +37,19 @@
     self.store = store;
 }
 
-- (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock {
-    
+- (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock saveDBStatusWrongBlock:(SaveDBStatusWrongBlock)saveDBStatusWrongBlock{
     if (0 == resultDict.count) {
-        saveDBStatusFailBlock(@"");
+        saveDBStatusWrongBlock(@"");
         return;
     }
     
     NSArray *restltArray = resultDict[@"ws"];
     if (0 == restltArray.count) {
-        saveDBStatusFailBlock(@"");
+        saveDBStatusWrongBlock(@"");
         return;
     }
     
-//    DDLog(@"result array is:%@", restltArray);
+    //    DDLog(@"result array is:%@", restltArray);
     NSMutableDictionary *tempInsertDBDict = [NSMutableDictionary dictionary];
     [restltArray enumerateObjectsUsingBlock:^(NSDictionary *subDict, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString *slotType = @"";
@@ -97,7 +96,6 @@
     }
     
     NSMutableDictionary *insertDBDict = [NSMutableDictionary dictionaryWithDictionary:self.insertDBDict];
-    
     self.insertDBDict = nil;
     DDLog(@"识别数据被清空！！！！！！！！！1");
     
@@ -113,7 +111,7 @@
     NSString *playerId = [self getPlayerIdWithinsertDBDict:insertDBDict];
     if (0 == playerId.length) {
         DDLog(@"该球员id不存在数据库表中！！！！！！！！");
-        saveDBStatusFailBlock(@"");
+        saveDBStatusWrongBlock(@"");
         return;
     }
     
@@ -126,8 +124,8 @@
     
     [self insertObjectByInsertDBDict:insertDBDict playerId:playerId];
     saveDBStatusSuccessBlock(insertDBDict);
-    
 }
+
 
 #pragma mark - 新增一条数据
 - (void)insertObjectByInsertDBDict:(NSDictionary *)insertDBDict playerId:(NSString *)playerId {

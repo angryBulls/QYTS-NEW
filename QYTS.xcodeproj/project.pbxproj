@@ -104,6 +104,7 @@
 		FA2C2A701F74AF5B00CEE0C9 /* ManualTSView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2C2A6F1F74AF5B00CEE0C9 /* ManualTSView.m */; };
 		FA2C2A731F74B30D00CEE0C9 /* CustomUIButtonRound.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2C2A721F74B30D00CEE0C9 /* CustomUIButtonRound.m */; };
 		FA2C2A761F74E6CA00CEE0C9 /* TSDBManager+RecognizerResultJudge.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2C2A751F74E6CA00CEE0C9 /* TSDBManager+RecognizerResultJudge.m */; };
+		FA2D855E1F9DBA090080A7B1 /* PcmModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2D855D1F9DBA090080A7B1 /* PcmModel.m */; };
 		FA2F057A1F3C0C21006DBA47 /* CreateGame3Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2F05791F3C0C21006DBA47 /* CreateGame3Cell.m */; };
 		FA2F057D1F3C52AC006DBA47 /* CreateGameTextfieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2F057C1F3C52AC006DBA47 /* CreateGameTextfieldView.m */; };
 		FA32B33E1F7902820078D08D /* TSNetworkManger+CBO.m in Sources */ = {isa = PBXBuildFile; fileRef = FA32B33D1F7902820078D08D /* TSNetworkManger+CBO.m */; };
@@ -406,6 +407,8 @@
 		FA2C2A721F74B30D00CEE0C9 /* CustomUIButtonRound.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomUIButtonRound.m; sourceTree = "<group>"; };
 		FA2C2A741F74E6CA00CEE0C9 /* TSDBManager+RecognizerResultJudge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TSDBManager+RecognizerResultJudge.h"; sourceTree = "<group>"; };
 		FA2C2A751F74E6CA00CEE0C9 /* TSDBManager+RecognizerResultJudge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TSDBManager+RecognizerResultJudge.m"; sourceTree = "<group>"; };
+		FA2D855C1F9DBA090080A7B1 /* PcmModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcmModel.h; sourceTree = "<group>"; };
+		FA2D855D1F9DBA090080A7B1 /* PcmModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PcmModel.m; sourceTree = "<group>"; };
 		FA2F05781F3C0C21006DBA47 /* CreateGame3Cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateGame3Cell.h; sourceTree = "<group>"; };
 		FA2F05791F3C0C21006DBA47 /* CreateGame3Cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateGame3Cell.m; sourceTree = "<group>"; };
 		FA2F057B1F3C52AC006DBA47 /* CreateGameTextfieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateGameTextfieldView.h; sourceTree = "<group>"; };
@@ -700,6 +703,8 @@
 			children = (
 				FA0B45361F272EA0003E8331 /* TSGameModel.h */,
 				FA0B45371F272EA0003E8331 /* TSGameModel.m */,
+				FA2D855C1F9DBA090080A7B1 /* PcmModel.h */,
+				FA2D855D1F9DBA090080A7B1 /* PcmModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1954,6 +1959,7 @@
 				FA1AEB491F7CD7E10008F684 /* TSManagerSectionViewController+TSEditSectionData.m in Sources */,
 				FA259DD21F57BB3C00217A74 /* EditInfoSignatureCell.m in Sources */,
 				FAB82CAD1F1F57870013E6F1 /* TSManagerSectionViewController.m in Sources */,
+				FA2D855E1F9DBA090080A7B1 /* PcmModel.m in Sources */,
 				FAC1E6A01F0E0E1700CEC64A /* UIColor+UIColor.m in Sources */,
 				FA2F057D1F3C52AC006DBA47 /* CreateGameTextfieldView.m in Sources */,
 				FA22FAE21F5E9499009AE85E /* MyGameOverModel.m in Sources */,

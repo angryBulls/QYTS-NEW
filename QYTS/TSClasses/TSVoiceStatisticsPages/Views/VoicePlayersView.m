@@ -359,7 +359,7 @@
     }
     
     if (1 == buttonIndex) {
-        
+        [SVProgressHUD show];   
         //判断是否有节次未提交
         NSMutableDictionary *gameTableDict = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         

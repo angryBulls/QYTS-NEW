@@ -247,6 +247,7 @@
             }
         }
     }];
+    
     NSSet *phoneSet = [NSSet setWithArray:phoneArray];
     if (phoneSet.count != phoneArray.count) {
         [SVProgressHUD showInfoWithStatus:@"手机号有重复"];
@@ -259,6 +260,7 @@
     
     TSCreateGameGTViewController *gameGTVC = [[TSCreateGameGTViewController alloc] init];
     gameGTVC.createGameModelArray = self.createGameModelArray;
+    
     [self.navigationController pushViewController:gameGTVC animated:YES];
 }
 

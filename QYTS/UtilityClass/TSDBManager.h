@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (^SaveDBStatusSuccessBlock)(NSDictionary *insertDBDict);
-typedef void (^SaveDBStatusFailBlock)(NSString *error);
+typedef void (^SaveDBStatusSuccessBlock)(NSDictionary *insertDBDict);//识别完整信息
+typedef void (^SaveDBStatusFailBlock)(NSString *error);// 识别有效信息（不完整）
+typedef void (^SaveDBStatusWrongBlock)(NSString *error);// 识别无效信息
 typedef void (^UpdatePalyerTableSuccessBlock)();
 
 @interface TSDBManager : NSObject
-- (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock;
+- (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock saveDBStatusWrongBlock:(SaveDBStatusWrongBlock)saveDBStatusWrongBlock;
 - (void)deleteObjectByInsertDBDict:(NSDictionary *)insertDBDict;
 - (id)getObjectById:(NSString *)objectId fromTable:(NSString *)tableName;
 

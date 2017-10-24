@@ -45,6 +45,8 @@
     
     [self p_createTipsLabel];
     
+    [self p_createDividerLabel];
+    
     [self p_createBottmShareButton];
     
     [self p_getShareMatchInfo];
@@ -174,12 +176,35 @@
     self.tipsLab = tipsLab;
 }
 
+- (void)p_createDividerLabel{
+    CGFloat tipsLabX = W(35.5);
+    CGFloat tipsLabY = CGRectGetMaxY(self.tipsLab.frame);
+    CGFloat tipsLabW = self.view.width - 2*tipsLabX;
+    CGFloat tipsLabH = H(48);
+    UILabel *tipsLab = [[UILabel alloc] initWithFrame:CGRectMake(tipsLabX, tipsLabY, tipsLabW, tipsLabH)];
+    tipsLab.font = [UIFont systemFontOfSize:W(13.0)];
+    tipsLab.textColor = TSHEXCOLOR(0xfefefe);
+    tipsLab.text = @"分享";
+    tipsLab.textAlignment = NSTextAlignmentCenter;
+    tipsLab.numberOfLines = 0;
+    [self.view addSubview:tipsLab];
+    
+    UIView *lineView1 = [[UIView alloc] initWithFrame:CGRectMake(0, tipsLabH/2, tipsLabW/2-W(26*2), H(1))];
+    lineView1.backgroundColor = TSHEXCOLOR(0xfefefe);
+    [tipsLab addSubview:lineView1];
+    
+    UIView *lineView2 = [[UIView alloc] initWithFrame:CGRectMake(W(26*2)+tipsLabW/2, tipsLabH/2, tipsLabW/2-W(26*2), H(1))];
+    lineView2.backgroundColor = TSHEXCOLOR(0xfefefe);
+    [tipsLab addSubview:lineView2];
+    
+}
+
 - (void)p_createBottmShareButton {
     CGFloat shareBtnW = W(57);
     CGFloat shareBtnH = H(80);
     CGFloat MarginX = W(86.5);
     
-    CGFloat weiboBtnY = CGRectGetMaxY(self.shareScoreView.frame) + H(130);
+    CGFloat weiboBtnY = CGRectGetMaxY(self.shareScoreView.frame) + H(140);
     CustomShareButton *weiboBtn = [CustomShareButton buttonWithType:UIButtonTypeCustom];
     weiboBtn.frame = CGRectMake(MarginX, weiboBtnY, shareBtnW, shareBtnH);
     [weiboBtn setTitle:@"微博" forState:UIControlStateNormal];
