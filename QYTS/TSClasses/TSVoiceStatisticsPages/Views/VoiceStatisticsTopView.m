@@ -71,7 +71,7 @@
     // add host team name label
     CGFloat nameLabX = W(7);
     CGFloat nameLabY = CGRectGetMaxY(hostTeamLab.frame) + H(9);
-    CGFloat nameLabW = W(39);
+    CGFloat nameLabW = W(40);
     CGFloat nameLabH = H(85);
     
     // 从数据库获取主客队的名称

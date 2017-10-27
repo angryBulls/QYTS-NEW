@@ -27,4 +27,12 @@
 - (void)startListening;
 - (void)stopListening;
 - (void)cancel;
+
+//读取录音文件
+-(void)p_readVedioWithPath:(NSString *)path;
+//删除录音文件
+-(void)deleteVedioWithPath:(NSString *)path;
+//删除所有录音文件
+-(void)deleteAllVedios;
+
 @end

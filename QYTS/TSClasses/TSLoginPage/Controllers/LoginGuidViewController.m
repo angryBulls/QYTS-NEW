@@ -88,9 +88,9 @@
 }
 
 - (void)p_showUpdateAlertTips {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"下载最新版本，体验全新功能" delegate:self cancelButtonTitle:@"去更新" otherButtonTitles:nil];
-    alert.tag = 2;
-    [alert show];
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"下载最新版本，体验全新功能" delegate:self cancelButtonTitle:@"去更新" otherButtonTitles:nil];
+//    alert.tag = 2;
+//    [alert show];
 }
 
 - (void)p_addStatementViews {

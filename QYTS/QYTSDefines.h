@@ -123,5 +123,6 @@ static NSString * const RegisterWechatSDK = @"registerWechatSDK";
 static NSString * const NetworkEnvironmentChange = @"NetworkEnvironmentChange";
 static NSString * const PlayerDataDidChanged = @"PlayerDataDidChanged";
 static NSString * const GoToTheNextStageGame = @"GoToTheNextStageGame";
+static NSString * const TSremoveArr = @"removeArr";
 static NSString * const GameOver = @"比赛结束";
 #endif /* QYTSDefines_h */

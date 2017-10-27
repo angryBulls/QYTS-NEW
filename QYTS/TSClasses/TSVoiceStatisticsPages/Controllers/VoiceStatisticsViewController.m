@@ -381,28 +381,20 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView.tag != 999) {
         
-        [self.audioPlayer stop];
         PcmModel *model = _pcmArr[indexPath.row];
         model.areadlyPlay = YES;
-        
         //读取声音
         NSString *path = model.pcmPath;
+        TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
         DDLog(@"current pcm path is:%@", path);
-        TTSConfig *instance = [TTSConfig sharedInstance];
-        NSError *error = nil;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+        [speechRecognizer p_readVedioWithPath:path];
         
-        self.audioPlayer = [[PcmPlayer alloc] initWithFilePath:path sampleRate:[instance.sampleRate integerValue]];
-        
-        [_audioPlayer play];
-        
-
-        [_tb reloadData];
+        [_tb reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil]  withRowAnimation:UITableViewRowAnimationNone];
         
     }
 }
 
-#pragma mark - 4
+#pragma mark - TSSpeechRecognizerDelegate
 - (void)onResultsString:(NSString *)resultsString insertDBDict:(NSDictionary *)insertDBDict recognizerResult:(BOOL)result {
     if (result) {
         [self.dataShowArray addObject:[resultsString mutableCopy]];
@@ -411,25 +403,20 @@
             [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.dataShowArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
             [self scrollTableToFoot:YES];
         }
+        
         [self.insertDBDictArray addObject:insertDBDict];
-        
         [self p_updateStatisticsData];
-        
     }
     
 }
 
-
 -(void)backPcmModelDic:(NSDictionary *)dic{
     self.pcmArr = dic[@"pcmArr"];
-    
     [_tb reloadData];
-    
     if (_pcmArr.count) {
         [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
 }
-
 
 
 - (void)onVolumeChanged:(int)volume {
@@ -498,18 +485,14 @@
     NSMutableArray *gameArrrr =[NSMutableArray arrayWithArray:[gameQuartArr componentsSeparatedByString:@","]];
     
     if (gameQuartArr.length  ) {
-        
         [self submitOldQuart];
-
     }
     else{
-
     NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
     TSVoiceViewModel *voiceViewModel = [[TSVoiceViewModel alloc] initWithPramasDict:paramsDict];
     [voiceViewModel setBlockWithReturnBlock:^(id returnValue) {
         DDLog(@"up load data returnValue is:%@", returnValue);
         //提交比赛成功后，后台获得matchinfoid，用于以后提交数据使用（除第一节比赛不需要matchinfoId，其他场次提交的时候均需要matchinfoId）
-       
         if (returnValue[@"entity"][@"matchInfoId"]) {
             gameTableDict[@"matchInfoId"] = returnValue[@"entity"][@"matchInfoId"];
             [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
@@ -524,10 +507,9 @@
                 [self p_pushFullManagerViewController];
             }
             // 更新比赛进行状态
-//            [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+            [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
             // 每节数据提交成功后，初始化所有球员的上场时间
             [SVProgressHUD showInfoWithStatus:@"提交成功"];
-            
             
         }
         
@@ -548,7 +530,7 @@
         }
         
         // 更新比赛进行状态
-//        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
         
         [SVProgressHUD dismiss];
         
@@ -556,7 +538,7 @@
     
     [voiceViewModel sendCurrentStageData];
     }
-}
+}  
 //提交未提交的节次
 -(void)submitOldQuart{
     NSMutableDictionary *paramsDict = [NSMutableDictionary dictionary];
@@ -596,22 +578,17 @@
         
         // 更新比赛进行状态
         [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
+        [self p_setupGameStatusWithSuccess:YES andStateArr:nil]; // 更新比赛进行状态
         gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
         
         if (str.length == 0 && [gameTableDict0[GameStatus] integerValue] == 1) {
-//            [self p_updateCurrentStageIfSendDataSuccess];
-//            [self.tSDBManager initPlayingTimesOnce];
+
             [self p_pushFullManagerViewController];
             [SVProgressHUD dismiss];
             
         } else {
-//            [SVProgressHUD show];
             [self p_sendCurrentStageData];
         }
-        
-        [SVProgressHUD dismiss];
-        
-        
         
     } WithErrorBlock:^(id errorCode) {
         
@@ -628,54 +605,29 @@
             [self p_pushFullManagerViewController];
         }
         // 更新比赛进行状态
-//        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
-        
-        
+        [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
         
         [SVProgressHUD dismiss];
         
-        
-        
     }];
    
-    
     [voiceViewModel sendCurrentStageData];
 }
 
 // 更新比赛进行状态
 -(void)p_updataCurrentStageDataWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)arr{
-    
     [self.dataShowArray removeAllObjects];
     [self.insertDBDictArray removeAllObjects];
     [self.tableView reloadData];
     //删除保存声音（所有）
     [self.pcmArr removeAllObjects];
     [self p_deleteRecodeFiles];
-    
     [_tb reloadData];
-    
-    [self p_setupGameStatusWithSuccess:success andStateArr:arr]; // 更新比赛进行状态
-    
-    
 }
 
 -(void)p_deleteRecodeFiles{
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *path = [paths objectAtIndex:0];
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
-    for (NSString *fileName in fileList)
-    {
-        
-        if ([fileName hasSuffix:@".pcm"]) {
-            NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
-            BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
-            if (bRet) {
-                NSError *err;
-                [fileMgr removeItemAtPath:fileDir error:&err];
-            }
-        }
-    }
+    TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
+    [speechRecognizer deleteAllVedios];
 }
 
 - (BOOL)p_refuseIfDivideAndLastStage {
@@ -747,6 +699,7 @@
 }
 
 - (void)p_setupGameStatusWithSuccess:(BOOL)success andStateArr:(NSMutableArray *)gameArr { // 设置比赛状态（结束或未结束）
+    
     NSMutableDictionary *gameTableDict0 = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     
     if (success == 1) {
@@ -768,11 +721,8 @@
             
         }
         NSString *gameStr = [quartStr substringFromIndex:1];
-        
         [gameTableDict0 setObject:gameStr forKey:GameQuaretArr];
-        
     }
-    
     
     [self.tSDBManager putObject:gameTableDict0 withId:GameId intoTable:GameTable];
     
@@ -806,14 +756,12 @@
     
     if (gameOver == YES) { // 比赛结束
         gameTableDict[GameStatus] = @"1";
-        
-        
     } else {
         gameTableDict[GameStatus] = @"0";
     }
+    
     [self.tSDBManager putObject:gameTableDict withId:GameId intoTable:GameTable];
     
-    DDLog(@"gameTableDict is ------ :%@", [self.tSDBManager getObjectById:GameId fromTable:GameTable]);
 }
 
 // LCActionSheetDelegate

@@ -242,6 +242,12 @@
         }
     }];
     
+    NSSet *phoneSet1 = [NSSet setWithArray:phoneArray];
+    if (phoneSet1.count != phoneArray.count) {
+        [SVProgressHUD showInfoWithStatus:@"客队手机号有重复"];
+        return;
+    }
+    
     [self.createGameModelArray[1] enumerateObjectsUsingBlock:^(TSCreateGameModel *createGameModel, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx > 0) {
             if (createGameModel.name.length) {
@@ -254,7 +260,7 @@
     
     NSSet *phoneSet = [NSSet setWithArray:phoneArray];
     if (phoneSet.count != phoneArray.count) {
-        [SVProgressHUD showInfoWithStatus:@"手机号有重复"];
+        [SVProgressHUD showInfoWithStatus:@"与主队球员手机号有重复"];
         return;
     }
     

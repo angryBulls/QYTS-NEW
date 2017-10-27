@@ -20,7 +20,8 @@
 #import "iflyMSC/IFlyDataUploader.h"
 #import "ISRDataHelper.h"
 #import "PcmModel.h"
-
+#import "PcmPlayer.h"
+#import "TTSConfig.h"
 #define GRAMMAR_TYPE_BNF @"bnf"
 
 @interface TSSpeechRecognizer ()
@@ -37,6 +38,7 @@
 @property (nonatomic) BOOL isCanceled;
 @property (nonatomic ,copy) NSString *date ;
 @property (nonatomic, strong) NSMutableArray *pcmArrs;
+@property (nonatomic, strong) PcmPlayer *player;
 
 
 @end
@@ -48,6 +50,13 @@
         _pcmArrs = [NSMutableArray array];
     }
     return _pcmArrs;
+}
+
+-(PcmPlayer *)player{
+    if (_player == nil) {
+        _player = [[PcmPlayer alloc] init];
+    }
+    return _player;
 }
 
 + (instancetype)defaultInstance {
@@ -72,7 +81,7 @@
         
         [self p_setupSpeechRecognizer];
         
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeArr) name:@"removeArr" object:nil];
+         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeArr) name:TSremoveArr object:nil];
     }
     
     return self;
@@ -298,10 +307,9 @@
     } grammarType:self.grammarType grammarContent:grammarContent];
 }
 
-//
--(void)saveVedio{
+//保存录音文件
+-(void)p_saveVedio{
     
-    //保存录音文件
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"HH:mm:ss"];
     _date = [formatter stringFromDate:[NSDate date]];
@@ -321,15 +329,62 @@
     
     [self.pcmArrs addObject:play];
  
+}
+//读取录音文件
+-(void)p_readVedioWithPath:(NSString *)path{
+    [self.player stop];
+    DDLog(@"current pcm path is:%@", path);
+    TTSConfig *instance = [TTSConfig sharedInstance];
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
+    self.player = [[PcmPlayer alloc] initWithFilePath:path sampleRate:[instance.sampleRate integerValue]];
+    [_player play];
     
 }
+
+//删除录音文件
+
+-(void)deleteVedioWithPath:(NSString *)path{
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    
+    if ([path hasSuffix:@".pcm"]) {
+        NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,path];
+        BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
+        if (bRet) {
+            NSError *err;
+            [fileMgr removeItemAtPath:fileDir error:&err];
+        }
+    }
+    
+}
+//删除所有录音文件
+-(void)deleteAllVedios{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths objectAtIndex:0];
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSArray *fileList= [fileMgr contentsOfDirectoryAtPath:path error:nil];
+    for (NSString *fileName in fileList)
+    {
+        
+        if ([fileName hasSuffix:@".pcm"]) {
+            NSString *fileDir = [NSString stringWithFormat:@"%@/%@",path,fileName];
+            BOOL bRet = [fileMgr fileExistsAtPath:fileDir];
+            if (bRet) {
+                NSError *err;
+                [fileMgr removeItemAtPath:fileDir error:&err];
+            }
+        }
+    }
+
+}
+
 
 #pragma mark - return method ************************************************************************
 - (void)startListening {
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
         DDLog(@"识别开启成功");
-        [self saveVedio];
+        [self p_saveVedio];
         [self.curResult setString:@""];
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
@@ -346,7 +401,11 @@
     
     [IFlySpeechRecognizer.sharedInstance cancel];
     
-    
-    
 }
+
+-(void)dealloc{
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TSremoveArr object:nil];
+}
+
 @end

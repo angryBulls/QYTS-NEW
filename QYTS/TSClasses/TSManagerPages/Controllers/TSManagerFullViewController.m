@@ -263,7 +263,7 @@
     if ([actionSheet.title containsString:@"作废"]) { // 作废本场比赛
         if (1 == buttonIndex) {
             [self p_matchBlankOut];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"removeArr" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:TSremoveArr object:nil];
         }
         return;
     }
@@ -272,7 +272,7 @@
         if (1 == buttonIndex) {
             
             [self p_initLocalDataBase];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"removeArr" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:TSremoveArr object:nil];
         }
     }
 }

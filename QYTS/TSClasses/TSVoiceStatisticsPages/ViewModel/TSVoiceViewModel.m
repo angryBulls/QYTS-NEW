@@ -150,6 +150,8 @@
     // 获取需要提交的节次
     NSDictionary *gameTableDict = [tSDBManager getObjectById:GameId fromTable:GameTable];
     if (_oldStage.length) {
+        
+        
         [StageAllArray enumerateObjectsUsingBlock:^(NSString *stageName, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([_oldStage isEqualToString:stageName]) {
                 if (0 == idx) {
@@ -327,7 +329,9 @@
     NSMutableArray *playerModelDataArray = [NSMutableArray array];
     [playerModelArray enumerateObjectsUsingBlock:^(TSPlayerModel *playerModel, NSUInteger idx, BOOL * _Nonnull stop) {
         NSDictionary *playerDataDict = [tSDBManager getObjectById:playerModel.ID fromTable:PlayerTable];
-        NSString *stageCount = [tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
+        
+        //如果_oldStage有值，说明是提交的离线时保存的节次的数据，如果_oldStage没有值，说明的提交的是本节数据
+        NSString *stageCount = _oldStage.length?  _oldStage : [tSDBManager getObjectById:GameId fromTable:GameTable][CurrentStage];
         
         NSDictionary *stagePlayerDataDict = playerDataDict[stageCount];
         if (!stagePlayerDataDict) {
