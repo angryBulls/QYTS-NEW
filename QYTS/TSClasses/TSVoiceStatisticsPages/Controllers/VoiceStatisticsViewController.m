@@ -314,9 +314,14 @@
 }
 
 - (void)p_endRecordVoice:(UIButton *)button { // 结束录音
-    self.volumeView.hidden = YES;
-    [self.speechRecognizer stopListening];
+   	
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        self.volumeView.hidden = YES;
+        [self.speechRecognizer stopListening];
+    });
+    
 }
+
 
 - (void)p_cancelRecordVoice:(UIButton *)button { // 手指上滑，取消识别
     self.volumeView.hidden = YES;
