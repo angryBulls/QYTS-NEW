@@ -39,7 +39,7 @@
 @property (nonatomic ,copy) NSString *date ;
 @property (nonatomic, strong) NSMutableArray *pcmArrs;
 @property (nonatomic, strong) PcmPlayer *player;
-
+@property (nonatomic) NSInteger setupNum;
 
 @end
 
@@ -96,7 +96,6 @@
 - (void)p_setupSpeechRecognizer {
     [self p_setupIfly];
     
-    [self p_buildIflyGrammer];
 }
 
 /**
@@ -117,9 +116,9 @@
  * @fn      onBeginOfSpeech
  * @brief   开始识别回调
  */
-- (void)onBeginOfSpeech {
-    DDLog(@"正在录音");
-}
+//- (void)onBeginOfSpeech {
+//    NSLog(@"正在录音");
+//}
 
 /**
  * @fn      onEndOfSpeech
@@ -152,10 +151,30 @@
         }
     } else {
         text = [NSString stringWithFormat:@"发生错误：%d %@",error.errorCode,error.errorDesc];
+        if (_setupNum == 0) {
+            [self initIFly];
+            
+        }
+        else if (_setupNum >0){
+            [SVProgressHUD showInfoWithStatus:@"讯飞启动失败，请重新启动程序"];
+        
+        }
+        _setupNum++;
     }
     
     DDLog(@"%@",text);
 }
+
+-(void)initIFly{
+    
+        //创建语音配置,appid必须要传入，仅执行一次则可
+        NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
+        //所有服务启动前，需要确保执行createUtility
+        [IFlySpeechUtility createUtility:initString];
+    
+}
+
+
 
 /**
  * @fn      onResults
@@ -181,11 +200,8 @@
     }
     
     if (isLast) {
-
     }
     [self.curResult appendString:resultString];
-    
-    DDLog(@"result is:%@",self.curResult);
     
     // 保存当前识别结果
     NSDictionary *resultDict = [TSToolsMethod dictionaryWithJsonString:[dic allKeys][0]];
@@ -272,6 +288,7 @@
         
         grammarContent = [TSToolsMethod readFile:bnfFilePath];
         
+        
         [[IFlySpeechUtility getUtility] setParameter:@"asr" forKey:[IFlyResourceUtil ENGINE_START]];
         
         [_iFlySpeechRecognizer setParameter:@"" forKey:[IFlySpeechConstant PARAMS]];
@@ -288,7 +305,6 @@
         [_iFlySpeechRecognizer setParameter:@"json" forKey:[IFlySpeechConstant RESULT_TYPE]];
 //        [_iFlySpeechRecognizer setParameter:@"8000" forKey:[IFlySpeechConstant SAMPLE_RATE]];
     }
-    
     //开始构建
     [_iFlySpeechRecognizer buildGrammarCompletionHandler:^(NSString *grammerID, IFlySpeechError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -313,7 +329,6 @@
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"HH:mm:ss"];
     _date = [formatter stringFromDate:[NSDate date]];
-    NSLog(@"date = %@",_date);
     
     IFlySpeechRecognizer *fly =   [IFlySpeechRecognizer sharedInstance];
     
@@ -333,11 +348,7 @@
 //读取录音文件
 -(void)p_readVedioWithPath:(NSString *)path{
     [self.player stop];
-    DDLog(@"current pcm path is:%@", path);
-    TTSConfig *instance = [TTSConfig sharedInstance];
-    NSError *error = nil;
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:&error];
-    self.player = [[PcmPlayer alloc] initWithFilePath:path sampleRate:[instance.sampleRate integerValue]];
+    self.player = [[PcmPlayer alloc] initWithFilePath:path sampleRate:16000];
     [_player play];
     
 }
@@ -383,9 +394,10 @@
 - (void)startListening {
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
-        DDLog(@"识别开启成功");
+       
         [self p_saveVedio];
         [self.curResult setString:@""];
+         NSLog(@"+++++开始录音++++");
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
     }
@@ -394,7 +406,6 @@
 - (void)stopListening {
     
     [IFlySpeechRecognizer.sharedInstance stopListening];
-    DDLog(@"结束识别");
     
 }
 - (void)cancel {

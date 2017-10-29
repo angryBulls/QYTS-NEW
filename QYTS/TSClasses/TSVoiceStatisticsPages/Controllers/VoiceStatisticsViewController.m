@@ -40,22 +40,9 @@
 @property (nonatomic ,strong) UITableView *tb;
 @property (nonatomic ,strong) NSMutableArray *pcmArr;
 
-@property (nonatomic, strong) PcmPlayer *audioPlayer;
-@property (nonatomic,strong) AVAudioPlayer *player;
-
-//@property (nonatomic,assign)BOOL isNet;//判断是否提交成功（是否有网）
-
 @end
 
 @implementation VoiceStatisticsViewController
-
-
-- (PcmPlayer *)audioPlayer {
-    if (!_audioPlayer) {
-        _audioPlayer = [[PcmPlayer alloc] init];
-    }
-    return _audioPlayer;
-}
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -116,15 +103,18 @@
     [self p_updateStatisticsData];
     
     [self p_checkGameStatus];
+    
+    [self p_initSpeechRecognizer];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
-    [speechRecognizer refreshFMDB];
+    [self p_initSpeechRecognizer];
+    [_speechRecognizer refreshFMDB];
     
     
 }
+
 
 -(void)p_updataMatchStatus{
     
@@ -136,7 +126,6 @@
 - (void)p_checkGameStatus {
     NSDictionary *gameTableDict = [self.tSDBManager getObjectById:GameId fromTable:GameTable];
     if (1 == [gameTableDict[GameStatus] intValue]) { // 比赛结束
-        
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             TSManagerViewController *managerVC = [[TSManagerViewController alloc] init];
@@ -150,6 +139,7 @@
 }
 
 - (void)p_initSpeechRecognizer {
+    
     TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
     speechRecognizer.delegate = self;
     self.speechRecognizer = speechRecognizer;
@@ -319,8 +309,8 @@
 }
 
 - (void)p_beginRecordVoice:(UIButton *)button { //开始录音
-    [self.speechRecognizer startListening];
     self.volumeView.hidden = NO;
+    [self.speechRecognizer startListening];
 }
 
 - (void)p_endRecordVoice:(UIButton *)button { // 结束录音
@@ -386,7 +376,6 @@
         //读取声音
         NSString *path = model.pcmPath;
         TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
-        DDLog(@"current pcm path is:%@", path);
         [speechRecognizer p_readVedioWithPath:path];
         
         [_tb reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil]  withRowAnimation:UITableViewRowAnimationNone];
@@ -531,7 +520,7 @@
         
         // 更新比赛进行状态
         [self p_updataCurrentStageDataWithSuccess:YES andStateArr:nil];
-        
+
         [SVProgressHUD dismiss];
         
     }];

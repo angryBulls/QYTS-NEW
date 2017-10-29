@@ -38,6 +38,7 @@
 }
 
 - (void)saveOneResultDataWithDict:(NSDictionary *)resultDict saveDBStatusSuccessBlock:(SaveDBStatusSuccessBlock)saveDBStatusSuccessBlock saveDBStatusFailBlock:(SaveDBStatusFailBlock)saveDBStatusFailBlock saveDBStatusWrongBlock:(SaveDBStatusWrongBlock)saveDBStatusWrongBlock{
+    
     if (0 == resultDict.count) {
         saveDBStatusWrongBlock(@"");
         return;

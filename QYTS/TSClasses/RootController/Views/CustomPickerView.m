@@ -113,7 +113,11 @@
     UIView *customView = [self p_createCustomPickerViews];
     
     if (self.pickerViewType == PickerViewTypeName) {
-        UILabel *titleLab = [self p_createNameLabelWithFrame:customView.frame title:self.valueArray[row]];
+        //去掉字符串两点的空格
+        NSString *str = self.valueArray[row] ;
+        NSString *title = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        UILabel *titleLab = [self p_createNameLabelWithFrame:customView.frame title:title];
         [customView addSubview:titleLab];
         if (self.checkRepeatValue.length) {
             if ([self.checkRepeatValue containsString:[NSString stringWithFormat:@",%@,", titleLab.text]]) {

@@ -99,19 +99,10 @@
 - (void)p_setupIfly {
     //打开输出在console的log开关
     [IFlySetting showLogcat:NO];
-    
     //创建语音配置,appid必须要传入，仅执行一次则可
     NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
     //所有服务启动前，需要确保执行createUtility
     [IFlySpeechUtility createUtility:initString];
-    
-    
-//    IFlyPcmRecorder *recorder = [IFlyPcmRecorder sharedInstance];
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    NSString *docDir = [paths objectAtIndex:0];
-//    NSString *createPath = [NSString stringWithFormat:@"%@/pcm",docDir];
-//    [recorder setSaveAudioPath:createPath];
-    
 }
 
 - (void)setAdvertisementBeRootView {

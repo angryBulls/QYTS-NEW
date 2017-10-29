@@ -203,7 +203,7 @@
     _playerModel = playerModel;
     
     self.nameLab.text = playerModel.name;
-    self.registerNumLab.text = playerModel.playerNumber;
+    self.registerNumLab.text = [NSString stringWithFormat:@"%ld",[playerModel.playerNumber integerValue]];
     [self.numbDpBtn setTitle:playerModel.gameNum forState:UIControlStateNormal];
     
     self.numbDpBtn.layer.borderColor = [UIColor whiteColor].CGColor;
