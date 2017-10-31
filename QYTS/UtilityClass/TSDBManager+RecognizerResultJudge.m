@@ -22,9 +22,11 @@
         
         int index = [insertDBDict[BnfTeameType] intValue] - 2;
         NSString *resultColor = ColorArray[index][1];
+        NSString *resultColorG = ColorArrayG[index][1];
         if ([resultColor isEqualToString:gameCheckDict[@"teamColorH"]]) {
             insertDBDict[BnfTeameType] = @"0";
-        } else if ([resultColor isEqualToString:gameCheckDict[@"teamColorG"]]) {
+        }
+        if ([resultColorG isEqualToString:gameCheckDict[@"teamColorG"]]) {
             insertDBDict[BnfTeameType] = @"1";
         }
     }

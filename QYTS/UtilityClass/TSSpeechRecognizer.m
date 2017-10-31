@@ -165,9 +165,6 @@
     DDLog(@"%@",text);
 }
 
-
-
-
 /**
  * @fn      onResults
  * @brief   识别结果回调
