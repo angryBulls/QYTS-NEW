@@ -81,7 +81,7 @@
         
         [self p_setupSpeechRecognizer];
         
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeArr) name:TSremoveArr object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeArr) name:TSremoveArr object:nil];
     }
     
     return self;
@@ -106,7 +106,7 @@
  * @
  */
 - (void)onVolumeChanged:(int)volume {
-//    NSString *currentVolume = [NSString stringWithFormat:@"音量：%d",volume];
+    //    NSString *currentVolume = [NSString stringWithFormat:@"音量：%d",volume];
     if ([self.delegate respondsToSelector:@selector(onVolumeChanged:)]) {
         [self.delegate onVolumeChanged:volume];
     }
@@ -116,10 +116,12 @@
  * @fn      onBeginOfSpeech
  * @brief   开始识别回调
  */
-//- (void)onBeginOfSpeech {
-//    NSLog(@"正在录音");
-//}
-
+- (void)onBeginOfSpeech {
+    NSLog(@"正在录音");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(showMessage)]) {
+        [self.delegate showMessage];
+    }
+}
 /**
  * @fn      onEndOfSpeech
  * @brief   停止录音回调
@@ -151,28 +153,18 @@
         }
     } else {
         text = [NSString stringWithFormat:@"发生错误：%d %@",error.errorCode,error.errorDesc];
-        if (_setupNum == 0) {
-            [self initIFly];
-            
-        }
-        else if (_setupNum >0){
-            [SVProgressHUD showInfoWithStatus:@"讯飞启动失败，请重新启动程序"];
         
+        [SVProgressHUD showInfoWithStatus:@"请重按"];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(updataRecoderDic)]) {
+            [self.delegate updataRecoderDic];
         }
+        
         _setupNum++;
     }
     
     DDLog(@"%@",text);
 }
 
--(void)initIFly{
-    
-        //创建语音配置,appid必须要传入，仅执行一次则可
-        NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
-        //所有服务启动前，需要确保执行createUtility
-        [IFlySpeechUtility createUtility:initString];
-    
-}
 
 
 
@@ -205,7 +197,7 @@
     
     // 保存当前识别结果
     NSDictionary *resultDict = [TSToolsMethod dictionaryWithJsonString:[dic allKeys][0]];
-
+    
     [self.dbManager saveOneResultDataWithDict:resultDict saveDBStatusSuccessBlock:^(NSDictionary *insertDBDict) {
         if ([self.delegate respondsToSelector:@selector(onResultsString:insertDBDict:recognizerResult:)]) {
             NSString *returnString = [_dbManager appendResultStringWithDict:insertDBDict];
@@ -235,7 +227,7 @@
         
     }];
     
-//    DDLog(@"dbManager info is:%@", dbManager);
+    //    DDLog(@"dbManager info is:%@", dbManager);
 }
 
 /**
@@ -299,11 +291,13 @@
         
         [_iFlySpeechRecognizer setParameter:aitalkResourcePath forKey:[IFlyResourceUtil ASR_RES_PATH]];
         [self.iFlySpeechRecognizer setParameter:@"asr" forKey:[IFlySpeechConstant IFLY_DOMAIN]];
+        //设置前端点
+        //        [_iFlySpeechRecognizer setParameter:@"4000" forKey:[IFlySpeechConstant VAD_BOS]];
         //设置后端点
         [_iFlySpeechRecognizer setParameter:@"1800" forKey:[IFlySpeechConstant VAD_EOS]];
         [_iFlySpeechRecognizer setParameter:@"utf-8" forKey:@"result_encoding"];
         [_iFlySpeechRecognizer setParameter:@"json" forKey:[IFlySpeechConstant RESULT_TYPE]];
-//        [_iFlySpeechRecognizer setParameter:@"8000" forKey:[IFlySpeechConstant SAMPLE_RATE]];
+        //        [_iFlySpeechRecognizer setParameter:@"8000" forKey:[IFlySpeechConstant SAMPLE_RATE]];
     }
     //开始构建
     [_iFlySpeechRecognizer buildGrammarCompletionHandler:^(NSString *grammerID, IFlySpeechError *error) {
@@ -343,7 +337,7 @@
     play.pcmPath = [NSString stringWithFormat:@"%@/%@.pcm",path,_date];
     
     [self.pcmArrs addObject:play];
- 
+    
 }
 //读取录音文件
 -(void)p_readVedioWithPath:(NSString *)path{
@@ -386,7 +380,7 @@
             }
         }
     }
-
+    
 }
 
 
@@ -394,10 +388,9 @@
 - (void)startListening {
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
-       
         [self p_saveVedio];
         [self.curResult setString:@""];
-         NSLog(@"+++++开始录音++++");
+        NSLog(@"+++++开始录音++++");
     } else {
         DDLog(@"启动识别服务失败，请稍后重试");//可能是上次请求未结束
     }

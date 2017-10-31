@@ -15,7 +15,12 @@
 - (void)backPcmModelDic:(NSDictionary *)dic;
 
 - (void)onVolumeChanged:(int)volume;
+
 - (void)onEndOfSpeech;
+
+- (void)showMessage;
+
+- (void)updataRecoderDic;
 @end
 
 @interface TSSpeechRecognizer : NSObject

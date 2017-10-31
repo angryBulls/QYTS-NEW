@@ -25,6 +25,7 @@
 #import "PcmModel.h"
 #import <Foundation/Foundation.h>
 #import<AVFoundation/AVFoundation.h>
+#import "PopupView.h"
 
 @interface VoiceStatisticsViewController () <TSSpeechRecognizerDelegate, LCActionSheetDelegate,UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) TSSpeechRecognizer *speechRecognizer;
@@ -39,6 +40,7 @@
 @property (nonatomic, weak) VoicePlayersView *voicePlayersView; // 显示场上球员号码
 @property (nonatomic ,strong) UITableView *tb;
 @property (nonatomic ,strong) NSMutableArray *pcmArr;
+@property (nonatomic, strong) PopupView * popUpView;
 
 @end
 
@@ -104,7 +106,7 @@
     
     [self p_checkGameStatus];
     
-    [self p_initSpeechRecognizer];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -146,7 +148,6 @@
 }
 
 #pragma mark - custom method ************************************************************************************
-
 
 - (void)p_createCenterView {
     // add players view
@@ -204,6 +205,10 @@
     volumeView.centerX = centerView.width*0.5;
     [centerView addSubview:volumeView];
     self.volumeView = volumeView;
+
+    self.popUpView = [[PopupView alloc]initWithFrame:CGRectMake(W(100) , W(300), 0, 0)];
+    self.popUpView.ParentView = self.view;
+    
 }
 
 - (void)p_createRevokeButton {
@@ -315,9 +320,10 @@
 
 - (void)p_endRecordVoice:(UIButton *)button { // 结束录音
    	
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(300 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
         self.volumeView.hidden = YES;
         [self.speechRecognizer stopListening];
+        [_popUpView dismissed];
     });
     
 }
@@ -326,16 +332,19 @@
 - (void)p_cancelRecordVoice:(UIButton *)button { // 手指上滑，取消识别
     self.volumeView.hidden = YES;
     [self.speechRecognizer cancel];
+    [_popUpView dismissed];
 }
 
 - (void)p_remindDragExit:(UIButton *)button { // 松开手指，取消识别
     self.volumeView.hidden = YES;
     [self.speechRecognizer cancel];
+    [_popUpView dismissed];
 }
 
 - (void)p_remindDragEnter:(UIButton *)button { // 手指上滑，取消识别
     self.volumeView.hidden = YES;
     [self.speechRecognizer cancel];
+    [_popUpView dismissed];
 }
 
 #pragma mark - UITableViewDataSource ************************************************************************************
@@ -422,6 +431,14 @@
     if (self.volumeView.hidden == NO) { // 如果手指还是按住状态
         [self.speechRecognizer startListening];
     }
+}
+
+-(void)showMessage{
+    [_popUpView setText: @"开始识别"];
+    [self.view addSubview:_popUpView];
+}
+-(void)updataRecoderDic{
+    [_pcmArr removeLastObject];
 }
 
 #pragma mark - update game statistics method
