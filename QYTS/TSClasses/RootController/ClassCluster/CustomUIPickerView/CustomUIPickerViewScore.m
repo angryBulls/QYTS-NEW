@@ -54,6 +54,13 @@
 -(NSMutableArray *)numbArray2{
     if (_numbArray2 == nil) {
         _numbArray2 = [NSMutableArray array];
+        if (self.defaultValueArray.count>1) {
+            for (int i = 0; i<[self.defaultValueArray[1] intValue]+1; i++) {
+                [_numbArray2 addObject:[NSString stringWithFormat:@"%d", i]];
+            }
+        }
+        
+        
     }
     return _numbArray2;
 }
@@ -242,7 +249,12 @@
     }
     
     if (0 == component) {
-        self.firstSelectValue = self.numbArray2[row];
+        if (2 == self.defaultValueArray.count) {
+             self.firstSelectValue = self.numbArray2[row];
+        }
+        else{
+            self.firstSelectValue = self.numbArray[row];
+        }
     } else if (1 == component) {
         self.secondSelectValue = self.numbArray[row];
         self.numbArray2 = [_numbArray subarrayWithRange:NSMakeRange(0, row+1)];
