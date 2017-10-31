@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UIPickerView *pickerView;
 
 @property (nonatomic, strong) NSMutableArray *numbArray;
+@property (nonatomic, strong) NSMutableArray *numbArray2;
 @property (nonatomic, weak) UILabel *selectedLab;
 @property (nonatomic, copy) NSString *firstSelectValue;
 @property (nonatomic, copy) NSString *secondSelectValue;
@@ -48,6 +49,13 @@
         }
     }
     return _numbArray;
+}
+
+-(NSMutableArray *)numbArray2{
+    if (_numbArray2 == nil) {
+        _numbArray2 = [NSMutableArray array];
+    }
+    return _numbArray2;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -155,7 +163,19 @@
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return self.numbArray.count;
+    if (self.defaultValueArray.count == 1) {
+        return self.numbArray.count;
+    }else{
+        if (component == 0) {
+            return self.numbArray2.count;
+        }
+        else
+        {
+            return self.numbArray.count;
+        }
+    }
+    
+    return 0;
 }
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
@@ -222,16 +242,15 @@
     }
     
     if (0 == component) {
-        self.firstSelectValue = self.numbArray[row];
+        self.firstSelectValue = self.numbArray2[row];
     } else if (1 == component) {
         self.secondSelectValue = self.numbArray[row];
+        self.numbArray2 = [_numbArray subarrayWithRange:NSMakeRange(0, row+1)];
+        [self.pickerView reloadComponent:0];
     }
     
     if (2 == self.defaultValueArray.count) {
-        if (self.firstSelectValue.intValue > self.secondSelectValue.intValue) {
-            self.secondSelectValue = self.firstSelectValue;
-            [self.pickerView selectRow:self.secondSelectValue.intValue inComponent:1 animated:YES];
-        }
+
         self.selectedLab.text = [NSString stringWithFormat:@"%@: %@ / %@", self.titleName, self.firstSelectValue, self.secondSelectValue];
     } else if (1 == self.defaultValueArray.count) {
         self.selectedLab.text = [NSString stringWithFormat:@"%@: %@", self.titleName, self.firstSelectValue];

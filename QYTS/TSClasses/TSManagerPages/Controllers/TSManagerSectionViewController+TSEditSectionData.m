@@ -98,6 +98,7 @@
     pickView.didSelectValueReturnBlock = ^(NSString *firstSelectValue, NSString *secondSelectValue) {
         DDLog(@"firstSelectValue:%@", firstSelectValue);
         DDLog(@"secondSelectValue:%@", secondSelectValue);
+        
         id newDataType;
         id newValue;
         if ([dataType isEqualToString:FreeThrowHit]) { // 修改罚篮数据

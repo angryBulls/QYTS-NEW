@@ -98,7 +98,9 @@
 #pragma mark - 讯飞相关配置
 - (void)p_setupIfly {
     //打开输出在console的log开关
-    [IFlySetting showLogcat:NO];
+//    [IFlySetting showLogcat:NO];
+    [IFlySetting setLogFile:LVL_ALL];
+    [IFlySetting showLogcat:YES];
     //创建语音配置,appid必须要传入，仅执行一次则可
     NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",IFLY_APPID_VALUE];
     //所有服务启动前，需要确保执行createUtility

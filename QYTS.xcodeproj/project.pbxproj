@@ -733,10 +733,10 @@
 		FA0E40961F18AB6E009AD283 /* TSPreGameCheckPages */ = {
 			isa = PBXGroup;
 			children = (
+				FA2904501FA80EE0008E3A14 /* views */,
 				FA0E40971F18AB6E009AD283 /* Controllers */,
 				FA0E40981F18AB6E009AD283 /* Models */,
 				FA0E40991F18AB6E009AD283 /* ViewModel */,
-				FA0E409A1F18AB6E009AD283 /* Views */,
 			);
 			path = TSPreGameCheckPages;
 			sourceTree = "<group>";
@@ -772,13 +772,6 @@
 				FACD987A1F2984290081DB28 /* GameCheckViewModel.m */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		FA0E409A1F18AB6E009AD283 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		FA0FB3721F162C5400F40447 /* TSCreateGamePages */ = {
@@ -1075,6 +1068,13 @@
 				FA1D88271F7B4E1A0056C204 /* ViewModel */,
 			);
 			path = TSAdvertisementPages;
+			sourceTree = "<group>";
+		};
+		FA2904501FA80EE0008E3A14 /* views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = views;
 			sourceTree = "<group>";
 		};
 		FA2AF34F1F550542003486A8 /* TSPersonalCenter */ = {

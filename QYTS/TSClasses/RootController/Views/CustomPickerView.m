@@ -23,6 +23,7 @@
 #pragma mark - lazy method ************************************************************************
 - (instancetype)initWithFrame:(CGRect)frame pickerViewType:(PickerViewType)pickerViewType valueArray:(NSArray *)valueArray returnValue:(SelectRowDataReturnBlock)returnValueBlock dismissReturnBlock:(DismissReturnBlock)dismissReturnBlock {
     if (self = [super initWithFrame:frame]) {
+        self.currentSelectValue = valueArray[0];
         _pickerViewType = pickerViewType;
         _valueArray = valueArray;
         _returnValueBlock = returnValueBlock;
@@ -237,6 +238,8 @@
 
 - (void)p_dismiss {
     self.dismissReturnBlock ? self.dismissReturnBlock(self.currentSelectValue) : nil;
+    
+    
     [self removeFromSuperview];
 }
 @end
