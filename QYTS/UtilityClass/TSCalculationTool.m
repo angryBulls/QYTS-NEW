@@ -494,14 +494,15 @@
     __block UIColor *teamColorG = [UIColor whiteColor];
     int currentUserType = [[[NSUserDefaults standardUserDefaults] objectForKey:CurrentLoginUserType] intValue];
     if (currentUserType == LoginUserTypeBCBC || currentUserType == LoginUserTypeCBO) {
-        [ColorArray enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
+        [ColorArrayH enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([subArray[1] isEqualToString:gameCheckDict[@"teamColorH"]]) {
                 teamColorH = [TSToolsMethod colorWithHexString:subArray[1]];
                 if ([subArray[0] isEqualToString:@"其他"]) { // 如果颜色是其他
                     teamColorH = [UIColor clearColor];
                 }
             }
-            
+        }];
+        [ColorArrayG enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([subArray[1] isEqualToString:gameCheckDict[@"teamColorG"]]) {
                 teamColorG = [TSToolsMethod colorWithHexString:subArray[1]];
                 if ([subArray[0] isEqualToString:@"其他"]) { // 如果颜色是其他
@@ -509,6 +510,9 @@
                 }
             }
         }];
+        
+        
+        
     }
     
     [colorArray addObject:teamColorH];

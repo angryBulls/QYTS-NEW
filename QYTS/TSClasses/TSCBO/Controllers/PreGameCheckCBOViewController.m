@@ -90,6 +90,7 @@
             [self.teamBgView addSubview:awayLabel];
         } else if (1 == i || 3 == i) {
             DropDownButton *dpBtn = [self createDropDownWithFrame:frame titleName:@"请选择队服颜色"];
+            dpBtn.tag = i;
             dpBtn.rightWidth = W(16.5);
             [dpBtn addTarget:self action:@selector(p_teamColorBtnClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.teamBgView addSubview:dpBtn];
@@ -101,31 +102,47 @@
 
 - (void)p_teamColorBtnClick:(DropDownButton *)dpBtn { // 选择颜色
     [self dpBtnClick:dpBtn];
-    
-    CustomPickerView *pickView = [[CustomPickerView alloc] initWithFrame:self.view.bounds pickerViewType:PickerViewTypeColor valueArray:ColorArray returnValue:^(id returnValue) {
+    if (dpBtn.tag == 1) {
+        [self chooseColorWithBtn:dpBtn Array:ColorArrayH];
+    }
+    else if(dpBtn.tag == 3){
+        [self chooseColorWithBtn:dpBtn Array:ColorArrayG];
+    }
+}
+
+//选择颜色
+-(void)chooseColorWithBtn:(DropDownButton*)dpBtn Array:(NSArray *)array{
+    CustomPickerView *pickView = [[CustomPickerView alloc] initWithFrame:self.view.bounds pickerViewType:PickerViewTypeColor valueArray:array returnValue:^(id returnValue) {
         [dpBtn setTitle:returnValue[0] forState:UIControlStateNormal];
     } dismissReturnBlock:^(id returnValue) {
         [dpBtn setTitle:returnValue[0] forState:UIControlStateNormal];
         [self dpBtnClick:dpBtn];
         [self.dropDownBtnArray enumerateObjectsUsingBlock:^(DropDownButton *subDpBtn, NSUInteger idx, BOOL * _Nonnull stop) {
             if (subDpBtn == dpBtn) {
-                if (0 == idx) { // 保存主队颜色
-                    self.checkModel.teamColorH = [self p_getCurrentColorValueWithColorName:returnValue[0]];
+                if (4 == idx) { // 保存主队颜色
+                    self.checkModel.teamColorH = [self p_getCurrentColorValueWithColorName:returnValue[0] AndArray:ColorArrayH];
                     DDLog(@"teamColorH is:%@", self.checkModel.teamColorH);
-                } else if (1 == idx) { // 保存客队颜色
-                    self.checkModel.teamColorG = [self p_getCurrentColorValueWithColorName:returnValue[0]];
+                } else if (6 == idx) { // 保存客队颜色
+                    self.checkModel.teamColorG = [self p_getCurrentColorValueWithColorName:returnValue[0] AndArray:ColorArrayG];
                     DDLog(@"teamColorG is:%@", self.checkModel.teamColorG);
                 }
             }
         }];
     }];
     if ([dpBtn.currentTitle containsString:@"选择"]) {
-        pickView.defaultValue = ColorArray[0][0];
+        if (dpBtn.tag == 1) {
+            pickView.defaultValue = ColorArrayH[0][0];
+        }
+        else if(dpBtn.tag == 3){
+            pickView.defaultValue = ColorArrayG[0][0];
+        }
     } else {
         pickView.defaultValue = dpBtn.currentTitle;
     }
     [pickView show];
+    
 }
+
 
 - (void)p_createRefereeInputViews {
     CGFloat refBgViewX = W(7.5);
@@ -220,9 +237,9 @@
     return titleLab;
 }
 
-- (NSString *)p_getCurrentColorValueWithColorName:(NSString *)colorName {
+- (NSString *)p_getCurrentColorValueWithColorName:(NSString *)colorName AndArray:(NSArray *)colorArr{
     __block NSString *colorValue = @"";
-    [ColorArray enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
+    [colorArr enumerateObjectsUsingBlock:^(NSArray *subArray, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([subArray[0] isEqualToString:colorName]) {
             colorValue = subArray[1];
             *stop = YES;

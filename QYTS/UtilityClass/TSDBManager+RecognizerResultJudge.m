@@ -21,8 +21,9 @@
         NSDictionary *gameCheckDict = [tSDBManager getObjectById:GameCheckID fromTable:TSCheckTable];
         
         int index = [insertDBDict[BnfTeameType] intValue] - 2;
-        NSString *resultColor = ColorArray[index][1];
-        NSString *resultColorG = ColorArrayG[index][1];
+        NSString *resultColor = ColorArrayH[index][1];
+        NSString *resultColorG = ColorArrayH[index][1];
+        
         if ([resultColor isEqualToString:gameCheckDict[@"teamColorH"]]) {
             insertDBDict[BnfTeameType] = @"0";
         }
