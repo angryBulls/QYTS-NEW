@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2016F9FC7BD08CF280E91AF1 /* Pods_QYTS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 428FD8499DB7C037B96757F7 /* Pods_QYTS.framework */; };
 		430500721F90A25B00F541E7 /* PcmPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 430500701F90A25B00F541E7 /* PcmPlayer.m */; };
-		430500751F90CC0E00F541E7 /* TTSConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 430500731F90CC0E00F541E7 /* TTSConfig.m */; };
 		43C2CED51F9455B90061FF35 /* VoiceStatisticsRecordingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C2CED41F9455B90061FF35 /* VoiceStatisticsRecordingCell.m */; };
 		C0A36A351F89217600A33AA7 /* PreGameCheckCBOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A36A341F89217600A33AA7 /* PreGameCheckCBOViewController.m */; };
 		FA00E5B81F60E1CD00047D88 /* TSAbstainedView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA00E5B71F60E1CD00047D88 /* TSAbstainedView.m */; };
@@ -225,8 +224,6 @@
 		4305006F1F90A25B00F541E7 /* PcmPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcmPlayer.h; sourceTree = "<group>"; };
 		430500701F90A25B00F541E7 /* PcmPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PcmPlayer.m; sourceTree = "<group>"; };
 		430500711F90A25B00F541E7 /* PcmPlayerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcmPlayerDelegate.h; sourceTree = "<group>"; };
-		430500731F90CC0E00F541E7 /* TTSConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTSConfig.m; sourceTree = "<group>"; };
-		430500741F90CC0E00F541E7 /* TTSConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTSConfig.h; sourceTree = "<group>"; };
 		43C2CED31F9455B90061FF35 /* VoiceStatisticsRecordingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceStatisticsRecordingCell.h; sourceTree = "<group>"; };
 		43C2CED41F9455B90061FF35 /* VoiceStatisticsRecordingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceStatisticsRecordingCell.m; sourceTree = "<group>"; };
 		9F98C942198926EE8E02DA24 /* Pods-QYTS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QYTS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QYTS/Pods-QYTS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1469,8 +1466,6 @@
 		FAC1E6661F0DD31600CEC64A /* UtilityClass */ = {
 			isa = PBXGroup;
 			children = (
-				430500731F90CC0E00F541E7 /* TTSConfig.m */,
-				430500741F90CC0E00F541E7 /* TTSConfig.h */,
 				4305006F1F90A25B00F541E7 /* PcmPlayer.h */,
 				430500701F90A25B00F541E7 /* PcmPlayer.m */,
 				430500711F90A25B00F541E7 /* PcmPlayerDelegate.h */,
@@ -1932,7 +1927,6 @@
 				FA1D88281F7B4E1A0056C204 /* TSAdvertisementViewController.m in Sources */,
 				FAB82CB31F1F69870013E6F1 /* TSPlayerDataCell.m in Sources */,
 				FA0E40A31F18B2E7009AD283 /* DropDownButton.m in Sources */,
-				430500751F90CC0E00F541E7 /* TTSConfig.m in Sources */,
 				FA0B86C31F677A0A001C1D91 /* TSNoGameTipsView.m in Sources */,
 				FAC1E6A61F0E171E00CEC64A /* TSTextFieldView.m in Sources */,
 				FA2C2A701F74AF5B00CEE0C9 /* ManualTSView.m in Sources */,

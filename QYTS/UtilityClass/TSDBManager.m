@@ -65,12 +65,26 @@
             slotType = BnfBehaviorType;
         } else if ([subDict[@"slot"] isEqualToString:BnfResultType]) {
             slotType = BnfResultType;
+        } else if ([subDict[@"slot"] isEqualToString:BnfTenNumberType2]) {
+            slotType = BnfTenNumberType2;
+        } else if ([subDict[@"slot"] isEqualToString:BnfBitsNumberType2]) {
+            slotType = BnfBitsNumberType2;
         }
         
         if (slotType.length) {
             tempInsertDBDict[slotType] = subDict[@"cw"][0][@"id"];
         }
     }];
+    
+    if (tempInsertDBDict[BnfTenNumberType2] && tempInsertDBDict[BnfBitsNumberType2]) {
+        NSInteger tenNumb = [tempInsertDBDict[BnfTenNumberType2] integerValue];
+        NSInteger bitNumb = [tempInsertDBDict[BnfBitsNumberType2] integerValue];
+        tempInsertDBDict[NumbResultStr2] = [NSString stringWithFormat:@"%ld", tenNumb + bitNumb];
+    } else if (tempInsertDBDict[BnfTenNumberType2] && !tempInsertDBDict[BnfBitsNumberType2]) {
+        tempInsertDBDict[NumbResultStr2] = [NSString stringWithFormat:@"%ld", [tempInsertDBDict[BnfTenNumberType2] integerValue]];
+    } else if (tempInsertDBDict[BnfBitsNumberType2] && !tempInsertDBDict[BnfTenNumberType2]) {
+        tempInsertDBDict[NumbResultStr2] = [NSString stringWithFormat:@"%ld", [tempInsertDBDict[BnfBitsNumberType2] integerValue]];
+    }
     
     if (tempInsertDBDict[BnfTenNumberType] && tempInsertDBDict[BnfBitsNumberType]) {
         NSInteger tenNumb = [tempInsertDBDict[BnfTenNumberType] integerValue];
@@ -84,6 +98,8 @@
     // 拼接好球员号码后，删除没用号码的数据
     [tempInsertDBDict removeObjectForKey:BnfTenNumberType];
     [tempInsertDBDict removeObjectForKey:BnfBitsNumberType];
+    [tempInsertDBDict removeObjectForKey:BnfTenNumberType2];
+    [tempInsertDBDict removeObjectForKey:BnfBitsNumberType2];
     
     //    DDLog(@"拼接球员号码后的数据为:%@", insertDBDict);
     
@@ -117,7 +133,7 @@
     }
     
     // 更新球员在场状态
-    if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])) { // 这是一条球员上场或下场的数据
+    if ((11 ==  [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])||(13 == [insertDBDict[BnfBehaviorType] intValue])) { // 这是一条球员上场或下场的数据
         [self p_updateDBTeamCheckPlayingStatusWithInsertDBDict:insertDBDict operationType:1];
         saveDBStatusSuccessBlock(insertDBDict);
         return;
@@ -137,7 +153,7 @@
 - (void)deleteObjectByInsertDBDict:(NSDictionary *)insertDBDict {
     if (0 == [insertDBDict[BnfBehaviorType] intValue]) { // 这是一条暂停数据，从gameTable表中删除
         [self p_updateDBByGameTabelKey:GameId insertDBDict:insertDBDict count:-1];
-    } else if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])) { // 这是一条球员上场或下场的数据
+    } else if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue]) ||( 13 == [insertDBDict[BnfBehaviorType] intValue])) { // 这是一条球员上场或下场的数据
         [self p_updateDBTeamCheckPlayingStatusWithInsertDBDict:insertDBDict operationType:0];
     } else { // 这是一条球员数据，从playerTable表中删除
         NSString *playerId = [self getPlayerIdWithinsertDBDict:insertDBDict];
@@ -279,7 +295,7 @@
         TeamCheckID = TeamCheckID_G;
         playerCheckArray = [[self.store getObjectById:TeamCheckID fromTable:TSCheckTable] mutableCopy];
     }
-    
+   
     NSMutableArray *newPlayerCheckArray = [NSMutableArray array];
     [playerCheckArray enumerateObjectsUsingBlock:^(NSDictionary *subDict, NSUInteger idx, BOOL * _Nonnull stop) {
         NSMutableDictionary *newDict = [subDict mutableCopy];
@@ -297,6 +313,25 @@
                     playingStatus = 0;
                 } else if (12 == [insertDBDict[BnfBehaviorType] intValue]) {
                     playingStatus = 1;
+                } else if (13 == [insertDBDict[BnfBehaviorType] intValue]){
+                    playingStatus = 1;
+                }
+                
+                subDict[@"playingStatus"] = [NSString stringWithFormat:@"%d", playingStatus];
+            }
+        }
+        else if ([subDict[@"gameNum"] intValue] == [insertDBDict[NumbResultStr2] intValue]) {
+            if (0 == operationType) { // 表示需要撤销一条数据
+                BOOL playingStatus = [subDict[@"playingStatus"] intValue];
+                subDict[@"playingStatus"] = [NSString stringWithFormat:@"%d", !playingStatus];
+            } else if (1 == operationType) { // 表示球员正常的上场或下场语音命令识别
+                int playingStatus = 0;
+                if (11 == [insertDBDict[BnfBehaviorType] intValue]) {
+                    playingStatus = 0;
+                } else if (12 == [insertDBDict[BnfBehaviorType] intValue]) {
+                    playingStatus = 1;
+                } else if (13 == [insertDBDict[BnfBehaviorType] intValue]){
+                    playingStatus = 0;
                 }
                 subDict[@"playingStatus"] = [NSString stringWithFormat:@"%d", playingStatus];
             }
@@ -305,6 +340,9 @@
     
     [self.store putObject:newPlayerCheckArray withId:TeamCheckID intoTable:TSCheckTable];
 }
+
+
+
 
 #pragma mark - 更新一次所有球员的上场时间
 - (void)udatePlayingTimesOnce {

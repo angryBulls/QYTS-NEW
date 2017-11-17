@@ -502,6 +502,7 @@
 
 - (void)p_saveGameCheckDataToDB {
     // 根据球队名称保存球队id到checkModel
+    
     [self.teamModelArray enumerateObjectsUsingBlock:^(TSTeamModel *teamModel, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([self.checkModel.homeTeamName isEqualToString:teamModel.name]) {
             self.checkModel.homeTeamId = teamModel.ID;

@@ -21,7 +21,6 @@
 #import "VoiceBgView.h"
 #import "iflyMSC/IFlyMSC.h"
 #import "PcmPlayer.h"
-#import "TTSConfig.h"
 #import "PcmModel.h"
 #import <Foundation/Foundation.h>
 #import<AVFoundation/AVFoundation.h>
@@ -38,7 +37,7 @@
 @property (nonatomic, weak) UIButton *submitSectionBtn;
 @property (nonatomic, weak) LCActionSheet *actionSheet;
 @property (nonatomic, weak) VoicePlayersView *voicePlayersView; // 显示场上球员号码
-@property (nonatomic ,strong) UITableView *tb;
+//@property (nonatomic ,strong) UITableView *tb;
 @property (nonatomic ,strong) NSMutableArray *pcmArr;
 @property (nonatomic, strong) PopupView * popUpView;
 
@@ -76,8 +75,6 @@
     return _tSDBManager;
 }
 
-
-
 #pragma mark - system method ************************************************************************************
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -106,7 +103,6 @@
     
     [self p_checkGameStatus];
     
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -114,12 +110,9 @@
     [self p_initSpeechRecognizer];
     [_speechRecognizer refreshFMDB];
     
-    
 }
 
-
 -(void)p_updataMatchStatus{
-    
     NSMutableDictionary *gameTableDic = [[self.tSDBManager getObjectById:GameId fromTable:GameTable] mutableCopy];
     gameTableDic[GameStatus] = @"0";
     [self.tSDBManager putObject:gameTableDic withId:GameId intoTable:GameTable];
@@ -182,21 +175,18 @@
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, H(50), 0);
     self.tableView.rowHeight = H(38);
     self.tableView.backgroundColor = centerView.backgroundColor;
+    self.tableView.showsVerticalScrollIndicator = FALSE;
     [centerView addSubview:self.tableView];
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5-W(.5), 0, W(1), self.centerView.height)];
-    [centerView addSubview:lineView];
-    lineView.backgroundColor = TSHEXCOLOR(0x1B2A47);
-    
-    _tb = [[UITableView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5, H(37), self.centerView.width*2/5,  self.centerView.height - H(37)- H(37)) style:UITableViewStylePlain];
-    _tb.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tb.showsVerticalScrollIndicator = 0;
-    
-    _tb.tag = 1000;
-    _tb.delegate = self;
-    _tb.dataSource = self;
-    [centerView addSubview:_tb];
-    _tb.backgroundColor = centerView.backgroundColor;
+//    _tb = [[UITableView alloc] initWithFrame:CGRectMake(self.centerView.width*3/5, H(37), self.centerView.width*2/5,  self.centerView.height - H(37)- H(37)) style:UITableViewStylePlain];
+//    _tb.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    _tb.showsVerticalScrollIndicator = 0;
+//
+//    _tb.tag = 1000;
+//    _tb.delegate = self;
+//    _tb.dataSource = self;
+//    [centerView addSubview:_tb];
+//    _tb.backgroundColor = centerView.backgroundColor;
     
     [self scrollTableToFoot:YES];
     CGFloat volumeViewH = H(50);
@@ -226,7 +216,8 @@
         [self.tSDBManager deleteObjectByInsertDBDict:[self.insertDBDictArray lastObject]];
         
         NSDictionary *insertDBDict = [self.insertDBDictArray lastObject];
-        if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])) { // 换人语音识别
+        
+        if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue]) ||(13 == [insertDBDict[BnfBehaviorType] intValue])) { // 换人语音识别
             [self.voicePlayersView updatePlayersStatus];
         }
         [self.insertDBDictArray removeLastObject];
@@ -382,20 +373,20 @@
     }
     return H(38);
 }
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (tableView.tag != 999) {
-        
-        PcmModel *model = _pcmArr[indexPath.row];
-        model.areadlyPlay = YES;
-        //读取声音
-        NSString *path = model.pcmPath;
-        TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
-        [speechRecognizer p_readVedioWithPath:path];
-        
-        [_tb reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil]  withRowAnimation:UITableViewRowAnimationNone];
-        
-    }
-}
+//-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+//    if (tableView.tag != 999) {
+//
+//        PcmModel *model = _pcmArr[indexPath.row];
+//        model.areadlyPlay = YES;
+//        //读取声音
+//        NSString *path = model.pcmPath;
+//        TSSpeechRecognizer *speechRecognizer = [TSSpeechRecognizer defaultInstance];
+//        [speechRecognizer p_readVedioWithPath:path];
+//
+//        [_tb reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil]  withRowAnimation:UITableViewRowAnimationNone];
+//
+//    }
+//}
 
 #pragma mark - TSSpeechRecognizerDelegate
 - (void)onResultsString:(NSString *)resultsString insertDBDict:(NSDictionary *)insertDBDict recognizerResult:(BOOL)result {
@@ -414,11 +405,11 @@
 }
 
 -(void)backPcmModelDic:(NSDictionary *)dic{
-    self.pcmArr = dic[@"pcmArr"];
-    [_tb reloadData];
-    if (_pcmArr.count) {
-        [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-    }
+//    self.pcmArr = dic[@"pcmArr"];
+//    [_tb reloadData];
+//    if (_pcmArr.count) {
+//        [_tb scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.pcmArr.count-1 inSection:0]  atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+//    }
 }
 
 
@@ -438,7 +429,7 @@
     [self.view addSubview:_popUpView];
 }
 -(void)updataRecoderDic{
-    [_pcmArr removeLastObject];
+//    [_pcmArr removeLastObject];
 }
 
 #pragma mark - update game statistics method
@@ -456,13 +447,13 @@
     self.gameModel = calculationTool.gameModel;
     
     NSDictionary *insertDBDict = [self.insertDBDictArray lastObject];
-    if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue])) { // 换人语音识别
+    
+    if ((11 == [insertDBDict[BnfBehaviorType] intValue]) || (12 == [insertDBDict[BnfBehaviorType] intValue]) || (13 == [insertDBDict[BnfBehaviorType] intValue]) ) { // 换人语音识别
         [self.voicePlayersView updatePlayersStatus];
     }
 }
 
 - (void)p_playerDataDidChanged:(NSNotification *)notif {
-    
     
     [self p_updateStatisticsData];
 }
@@ -630,10 +621,10 @@
     [self.dataShowArray removeAllObjects];
     [self.insertDBDictArray removeAllObjects];
     [self.tableView reloadData];
-    //删除保存声音（所有）
-    [self.pcmArr removeAllObjects];
-    [self p_deleteRecodeFiles];
-    [_tb reloadData];
+//    //删除保存声音（所有）
+//    [self.pcmArr removeAllObjects];
+//    [self p_deleteRecodeFiles];
+//    [_tb reloadData];
 }
 
 -(void)p_deleteRecodeFiles{

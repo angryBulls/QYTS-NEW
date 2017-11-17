@@ -74,6 +74,9 @@
             }
         }
     }
+    if (13 == [insertDBDict[BnfBehaviorType] intValue]) {
+        
+    }
     
     return YES;
 }
@@ -121,7 +124,12 @@
         [resultString appendString:@"下场"];
     } else if (12 == [insertDBDict[BnfBehaviorType] intValue]) { // 上场
         [resultString appendString:@"上场"];
-    } else if (31 == [insertDBDict[BnfBehaviorType] intValue]) { // 一分
+    } else if (13 == [insertDBDict[BnfBehaviorType] intValue]) { // 换人
+        [resultString appendString:@"换"];
+        [resultString appendString:[NSString stringWithFormat:@"%@号", insertDBDict[NumbResultStr2]]];
+    }
+    
+    else if (31 == [insertDBDict[BnfBehaviorType] intValue]) { // 一分
         [resultString appendString:@"一分"];
     }
     

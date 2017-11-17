@@ -119,10 +119,11 @@
         [self dpBtnClick:dpBtn];
         [self.dropDownBtnArray enumerateObjectsUsingBlock:^(DropDownButton *subDpBtn, NSUInteger idx, BOOL * _Nonnull stop) {
             if (subDpBtn == dpBtn) {
-                if (4 == idx) { // 保存主队颜色
+                
+                if (1 == subDpBtn.tag) { // 保存主队颜色
                     self.checkModel.teamColorH = [self p_getCurrentColorValueWithColorName:returnValue[0] AndArray:ColorArrayH];
                     DDLog(@"teamColorH is:%@", self.checkModel.teamColorH);
-                } else if (6 == idx) { // 保存客队颜色
+                } else if (3 == subDpBtn.tag) { // 保存客队颜色
                     self.checkModel.teamColorG = [self p_getCurrentColorValueWithColorName:returnValue[0] AndArray:ColorArrayG];
                     DDLog(@"teamColorG is:%@", self.checkModel.teamColorG);
                 }

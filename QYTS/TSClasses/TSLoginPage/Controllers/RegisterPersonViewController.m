@@ -233,7 +233,7 @@
     __block NSString *errorStr = @"";
     [self.textfieldArray enumerateObjectsUsingBlock:^(TSTextFieldView *textFieldView, NSUInteger idx, BOOL * _Nonnull stop) {
         if (0 == idx) { // 姓名
-            if (0 == textFieldView.textField.text.length <2 || textFieldView.textField.text.length>14) {
+            if ( textFieldView.textField.text.length <2 || textFieldView.textField.text.length>14) {
                 errorStr = @"请填写姓名";
                 *stop = YES;
             }
@@ -274,7 +274,7 @@
         }
         
         if (5 == idx) { // 邀请码
-            if (textFieldView.textField.text.length != 4 || textFieldView.textField.text.length != 0) {
+            if (textFieldView.textField.text.length != 4 && textFieldView.textField.text.length != 0) {
                 errorStr = @"请填写正确邀请码";
                 *stop = YES;
             }

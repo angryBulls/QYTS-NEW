@@ -262,6 +262,7 @@ static NSString * const TS_USER_INFO_NORMAL = @"ts_user_info_normal";
         DDLog(@"json解析失败：%@",err);
         return nil;
     }
+    
     return dic;
 }
 

@@ -21,7 +21,6 @@
 #import "ISRDataHelper.h"
 #import "PcmModel.h"
 #import "PcmPlayer.h"
-#import "TTSConfig.h"
 #define GRAMMAR_TYPE_BNF @"bnf"
 
 @interface TSSpeechRecognizer ()
@@ -37,7 +36,7 @@
 @property (nonatomic, strong) NSMutableString *curResult; //当前session的结果
 @property (nonatomic) BOOL isCanceled;
 @property (nonatomic ,copy) NSString *date ;
-@property (nonatomic, strong) NSMutableArray *pcmArrs;
+//@property (nonatomic, strong) NSMutableArray *pcmArrs; //保存音频数组
 @property (nonatomic, strong) PcmPlayer *player;
 @property (nonatomic) NSInteger setupNum;
 
@@ -45,12 +44,12 @@
 
 @implementation TSSpeechRecognizer
 
--(NSMutableArray *)pcmArrs{
-    if (_pcmArrs == nil) {
-        _pcmArrs = [NSMutableArray array];
-    }
-    return _pcmArrs;
-}
+//-(NSMutableArray *)pcmArrs{
+//    if (_pcmArrs == nil) {
+//        _pcmArrs = [NSMutableArray array];
+//    }
+//    return _pcmArrs;
+//}
 
 -(PcmPlayer *)player{
     if (_player == nil) {
@@ -89,7 +88,7 @@
 
 -(void)removeArr{
     
-    [self.pcmArrs removeAllObjects];
+//    [self.pcmArrs removeAllObjects];
     
 }
 
@@ -172,6 +171,7 @@
  * @param   results      -[out] 识别结果，NSArray的第一个元素为NSDictionary，NSDictionary的key为识别结果，value为置信度
  */
 - (void)onResults:(NSArray *)results isLast:(BOOL)isLast {
+    
     NSMutableString *result = [[NSMutableString alloc] init];
     NSMutableString * resultString = [[NSMutableString alloc]init];
     NSDictionary *dic = results[0];
@@ -200,7 +200,7 @@
             NSString *returnString = [_dbManager appendResultStringWithDict:insertDBDict];
             DDLog(@"returnString is:%@", returnString);
             
-            [_pcmArrs removeLastObject];
+//            [_pcmArrs removeLastObject];
             
             [self.delegate onResultsString:returnString insertDBDict:insertDBDict recognizerResult:YES];
         }
@@ -208,19 +208,19 @@
         
         [self.delegate onResultsString:self.curResult insertDBDict:@{} recognizerResult:NO];
         
-        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        [dic setValue:_pcmArrs forKey:@"pcmArr"];
-        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
-            [self.delegate backPcmModelDic:dic];
-        }
+//        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+//        [dic setValue:_pcmArrs forKey:@"pcmArr"];
+//        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
+//            [self.delegate backPcmModelDic:dic];
+//        }
         
         
     } saveDBStatusWrongBlock:^(NSString *error) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        [dic setValue:_pcmArrs forKey:@"pcmArr"];
-        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
-            [self.delegate backPcmModelDic:dic];
-        }
+//        [dic setValue:_pcmArrs forKey:@"pcmArr"];
+//        if ([self.delegate respondsToSelector:@selector(backPcmModelDic:)]) {
+//            [self.delegate backPcmModelDic:dic];
+//        }
         
     }];
     
@@ -272,7 +272,7 @@
         TSDBManager *dbManager = [[TSDBManager alloc] init];
         NSDictionary *gameTableDict = [dbManager getObjectById:GameId fromTable:GameTable];
         if (2 == [gameTableDict[@"ruleType"] intValue]) { // 3X3 加载的bnf
-            bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/3X3Basketball.bnf",appPath];
+            bnfFilePath = [[NSString alloc] initWithFormat:@"%@/bnf/3V3Basketball.bnf",appPath];
         }
         
         grammarContent = [TSToolsMethod readFile:bnfFilePath];
@@ -333,7 +333,7 @@
     play.saveIn = YES;
     play.pcmPath = [NSString stringWithFormat:@"%@/%@.pcm",path,_date];
     
-    [self.pcmArrs addObject:play];
+//    [self.pcmArrs addObject:play];
     
 }
 //读取录音文件
@@ -385,7 +385,7 @@
 - (void)startListening {
     BOOL ret = [IFlySpeechRecognizer.sharedInstance startListening];
     if (ret) {
-        [self p_saveVedio];
+//        [self p_saveVedio];
         [self.curResult setString:@""];
         NSLog(@"+++++开始录音++++");
     } else {

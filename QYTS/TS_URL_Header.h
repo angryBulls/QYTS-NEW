@@ -51,11 +51,13 @@ static NSString * const GameQuaretArr = @"gameQuaretArr";
 static NSString * const BnfTeameType = @"<teamName>";
 static NSString * const BnfTenNumberType = @"<tenNumber>";
 static NSString * const BnfBitsNumberType = @"<bitsNumber>";
+static NSString * const BnfTenNumberType2 = @"<tenNumber2>";
+static NSString * const BnfBitsNumberType2 = @"<bitsNumber2>";
 static NSString * const BnfBehaviorType = @"<behavior>";
 static NSString * const BnfResultType = @"<result>";
 
 static NSString * const NumbResultStr = @"NumbResultStr";
-
+static NSString * const NumbResultStr2 = @"NumbResultStr2";
 static NSString * const BehaviorNumb = @"behaviorNumb"; // 用于标记行为
 
 // 各个技术统计项目对应的标记号（标记好对应的数据为该项目的统计数量）

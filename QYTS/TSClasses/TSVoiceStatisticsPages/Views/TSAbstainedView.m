@@ -35,12 +35,16 @@
     [self addSubview:homeAbstainedBtn];
     self.homeAbstainedBtn = homeAbstainedBtn;
     
-    UILabel *awayAbstainedBtn = [self p_createButtonWithTitle:@"未识别录音:"];
-    awayAbstainedBtn.x = self.width*3/5 + W(9);
-    awayAbstainedBtn.y = homeAbstainedBtn.y;
-//    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:awayAbstainedBtn];
-    self.awayAbstainedBtn = awayAbstainedBtn;
+//    UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(self.width*3/5-W(.5), 0, W(1), self.height)];
+//    [self addSubview:lineView];
+//    lineView.backgroundColor = TSHEXCOLOR(0x1B2A47);
+    
+//    UILabel *awayAbstainedBtn = [self p_createButtonWithTitle:@"未识别录音:"];
+//    awayAbstainedBtn.x = self.width*3/5 + W(9);
+//    awayAbstainedBtn.y = homeAbstainedBtn.y;
+////    [awayAbstainedBtn addTarget:self action:@selector(p_awayAbstainedBtnClick) forControlEvents:UIControlEventTouchUpInside];
+//    [self addSubview:awayAbstainedBtn];
+//    self.awayAbstainedBtn = awayAbstainedBtn;
 
     
     TSDBManager *tSDBManager = [[TSDBManager alloc] init];
